@@ -101,7 +101,7 @@ endif
 
 " Search
 Plug 'haya14busa/incsearch.vim'
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'majutsushi/tagbar'
 
