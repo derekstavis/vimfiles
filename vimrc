@@ -361,6 +361,7 @@ let $FZF_DEFAULT_COMMAND = 'ag -g ""'
 
 nnoremap <C-P> :Files<cr>
 nnoremap <C-F> :Ag 
+nnoremap <C-B> :Buffers<cr>
 " }}}
 " ##### Yankstack  {{{
 " Don't use default mappings
