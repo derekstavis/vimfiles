@@ -11,6 +11,15 @@ endif
 
 " "}}}
 
+" ##### Fix Terminal enter/exit {{{
+tnoremap <silent> <C-up> <C-\><C-n><C-w><up>
+tnoremap <silent> <C-down> <C-\><C-n><C-w><down>
+tnoremap <silent> <C-left> <C-\><C-n><C-w><left>
+tnoremap <silent> <C-right> <C-\><C-n><C-w><right>
+autocmd BufWinEnter,WinEnter term://* startinsert
+autocmd BufLeave term://* stopinsert
+" "}}}
+
  " ##### Plug setup  {{{
 call plug#begin('~/.vim/plugged')
 " "}}}
