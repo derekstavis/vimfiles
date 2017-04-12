@@ -90,6 +90,7 @@ Plug 'uarun/vim-protobuf'
 Plug 'CyCoreSystems/vim-cisco-ios'
 Plug 'tpope/vim-markdown'
 Plug 'jtratner/vim-flavored-markdown'
+Plug 'Matt-Deacalion/vim-systemd-syntax'
 
 " JS Beautify
 Plug 'michalliu/jsruntime.vim'
