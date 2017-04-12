@@ -147,6 +147,8 @@ set number
 set ruler
 " Highlight ruler at colum 72.
 set colorcolumn=72
+" Highlight current line
+set cursorline
 
 " Highlight matches as you type.
 set incsearch
