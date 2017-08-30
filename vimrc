@@ -526,6 +526,8 @@ autocmd FileType go let g:go_highlight_fields = 1
 autocmd FileType go let g:go_highlight_types = 1
 autocmd FileType go let g:go_highlight_operators = 1
 autocmd FileType go let g:go_highlight_build_constraints = 1
+
+autocmd BufWritePost *.go :GoImports
 " }}}
 " ##### Rocker {{{
 autocmd BufRead,BufNewFile Rockerfile* set filetype=dockerfile
