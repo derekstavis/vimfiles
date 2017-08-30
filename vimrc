@@ -93,6 +93,7 @@ Plug 'CyCoreSystems/vim-cisco-ios'
 Plug 'tpope/vim-markdown'
 Plug 'jtratner/vim-flavored-markdown'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
+Plug 'ap/vim-css-color'
 
 " JS Beautify
 Plug 'michalliu/jsruntime.vim'
