@@ -58,8 +58,8 @@ Plug 'tpope/vim-unimpaired'
 Plug 'Raimondi/delimitMate'
 Plug 'SirVer/ultisnips'
 Plug 'tomtom/tcomment_vim'
-Plug 'maxbrunsfeld/vim-yankstack'
 Plug 'Shougo/vimproc.vim'
+Plug 'bfredl/nvim-miniyank'
 
 " Colorschemes
 Plug 'sjl/badwolf'
@@ -367,11 +367,10 @@ nnoremap <C-B> :Buffers<cr>
 " }}}
 " ##### Yankstack  {{{
 " Don't use default mappings
-let g:yankstack_map_keys = 0
+map p <Plug>(miniyank-autoput)
+map P <Plug>(miniyank-autoPut)
 
-" Set bindings
-nmap <C-M> <Plug>yankstack_substitute_older_paste
-nmap <C-N> <Plug>yankstack_substitute_newer_paste
+map <cr> <Plug>(miniyank-cycle)
 " }}}
 " ##### Number toggle  {{{
 let g:NumberToggleTrigger="<leader>ll"
