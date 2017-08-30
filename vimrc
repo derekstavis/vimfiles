@@ -107,6 +107,7 @@ Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' }
 Plug 'awetzel/elixir.nvim', { 'for': 'exs' }
 Plug 'zchee/deoplete-clang'
 Plug 'vim-syntastic/syntastic'
+Plug 'tpope/vim-endwise'
 
 " Search
 Plug 'haya14busa/incsearch.vim'
