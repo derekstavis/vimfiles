@@ -115,6 +115,7 @@ Plug 'haya14busa/incsearch.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
 Plug 'majutsushi/tagbar'
+Plug 'lvht/tagbar-markdown'
 
 " Git
 Plug 'tpope/vim-fugitive'
@@ -306,7 +307,10 @@ nnoremap <S-Left> <c-w><
 nnoremap <S-Right> <c-w>>
 
 " OS Clipboard
-set clipboard=unnamedplus
+if has('clipboard')
+  set clipboard=unnamedplus
+endif
+
 vnoremap <leader>c "*y
 vnoremap <leader>v "*p
 vnoremap <leader>V "*P
