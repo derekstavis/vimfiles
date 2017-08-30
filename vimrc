@@ -82,6 +82,7 @@ Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-packer'
 Plug 'hashivim/vim-consul'
 Plug 'hashivim/vim-vaultproject'
+Plug 'juliosueiras/vim-terraform-completion'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'digitaltoad/vim-pug'
@@ -383,6 +384,9 @@ let g:NumberToggleTrigger="<leader>ll"
 " ##### Javascript JSX {{{
 let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 "}}}
+" ##### Terraform {{{
+let g:terraform_fmt_on_save = 1
+" }}}
 " ##### togglelist {{{
 let g:toggle_list_copen_command="Copen"
 " }}}
