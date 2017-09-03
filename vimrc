@@ -66,6 +66,7 @@ Plug 'bfredl/nvim-miniyank'
 Plug 'sjl/badwolf'
 Plug 'dracula/vim'
 Plug 'tomasr/molokai'
+Plug 'morhetz/gruvbox'
 
 " Languages
 Plug 'b4winckler/vim-objc'
@@ -203,7 +204,8 @@ syntax on
 set fillchars+=vert:│
 
 " Sets the colorscheme for terminal sessions too.
-colorscheme dracula
+set background=dark
+colorscheme gruvbox
 
 " Leader = ,
 let mapleader = ","
@@ -351,7 +353,7 @@ let NERDTreeMapActivateNode='<space>'
 " ##### Airline  {{{
 let g:airline_powerline_fonts = 1
 let g:airline#extensions#tabline#enabled = 1
-let g:airline_theme = 'cobalt2'
+let g:airline_theme = 'gruvbox'
 let g:airline_section_warning = ''
 let g:airline_inactive_collapse = 0
 let g:airline#extensions#default#section_truncate_width = {
