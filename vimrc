@@ -256,7 +256,7 @@ nnoremap <Space> za
 " Open all folds
 nnoremap zO zR
 " Close all folds
-nnoremap zC zM
+nnoremap <c-Space> zM
 " Close current fold
 nnoremap zc zc
 " Close all folds except the current one
