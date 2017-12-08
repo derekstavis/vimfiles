@@ -95,6 +95,7 @@ Plug 'tpope/vim-markdown'
 Plug 'jtratner/vim-flavored-markdown'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'ap/vim-css-color'
+Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
 
 " JS Beautify
 Plug 'michalliu/jsruntime.vim'
@@ -102,8 +103,8 @@ Plug 'michalliu/jsoncodecs.vim'
 
 " Omnicompletion
 Plug 'neomake/neomake'
-Plug 'Shougo/deoplete.nvim'
-Plug 'carlitux/deoplete-ternjs'
+Plug 'Shougo/deoplete.nvim', { 'do': 'UpdateRemotePlugins' }
+Plug 'Shougo/echodoc.vim'
 Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' }
 Plug 'awetzel/elixir.nvim', { 'for': 'exs' }
 Plug 'zchee/deoplete-clang'
@@ -408,8 +409,23 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
 let g:deoplete#sources#go#use_cache = 1
 " }}}
-" ##### monster (ruby) {{{
-let g:monster#completion#rcodetools#backend = "async_rct_complete"
+" ##### language client {{{
+" Required for operations modifying multiple buffers like rename.
+set hidden
+
+let nodejs_prefix = systemlist('npm config get prefix')[0]
+
+let g:LanguageClient_serverCommands = {
+    \ 'javascript': [nodejs_prefix . '/lib/node_modules/javascript-typescript-langserver/lib/language-server-stdio.js'],
+    \ 'javascript.jsx': [nodejs_prefix . '/lib/node_modules/javascript-typescript-langserver/lib/language-server-stdio.js'],
+    \ }
+
+" Automatically start language servers.
+let g:LanguageClient_autoStart = 1
+
+nnoremap <silent> <leader>hv :call LanguageClient_textDocument_hover()<CR>
+nnoremap <silent> <leader>gt :call LanguageClient_textDocument_definition()<CR>
+nnoremap <silent> <leader>rn :call LanguageClient_textDocument_rename()<CR>
 " }}}
 " ##### Neomake {{{
 augroup neomake_save_linter
