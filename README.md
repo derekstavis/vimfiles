@@ -1,8 +1,8 @@
-greenboxal's vimfiles
+derekstavis vimfiles
 
 These are my vimfiles. I created them almost from scratch when I started using Vim and adapted them to my needs.
 
-Based on [Pedro Franceschi's vimfiles](https://github.com/pedrofranceschi/vimfiles).
+Based on [Jonathan's vimfiles](https://github.com/greenboxal/vimfiles).
 
 #### What's included
 
@@ -54,7 +54,7 @@ Go to your home directory:
 Clone my vimfiles repo:
 
 
-    git clone --recursive https://github.com/greenboxal/vimfiles.git
+    git clone --recursive https://github.com/derekstavis/vimfiles.git
 
 Rename the repo to .vim in your home directory:
 
