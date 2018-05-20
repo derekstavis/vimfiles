@@ -29,11 +29,13 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'teranex/jk-jumps.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'milkypostman/vim-togglelist'
 Plug 'ton/vim-bufsurf'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'nathanaelkane/vim-indent-guides'
+Plug 'thaerkh/vim-indentguides'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'sjl/vitality.vim'
 Plug 'christoomey/vim-tmux-navigator'
@@ -54,18 +56,16 @@ Plug 'embear/vim-localvimrc'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
-Plug 'tpope/vim-unimpaired'
 Plug 'Raimondi/delimitMate'
 Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'epilande/vim-es2015-snippets'
+Plug 'epilande/vim-react-snippets'
 Plug 'tomtom/tcomment_vim'
 Plug 'Shougo/vimproc.vim'
 Plug 'bfredl/nvim-miniyank'
 
 " Colorschemes
-Plug 'sjl/badwolf'
-Plug 'dracula/vim'
-Plug 'tomasr/molokai'
 Plug 'morhetz/gruvbox'
 
 " Languages
@@ -87,7 +87,6 @@ Plug 'juliosueiras/vim-terraform-completion'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'digitaltoad/vim-pug'
-Plug 'osyo-manga/vim-monster'
 Plug 'zchee/deoplete-jedi'
 Plug 'uarun/vim-protobuf'
 Plug 'CyCoreSystems/vim-cisco-ios'
@@ -95,7 +94,10 @@ Plug 'tpope/vim-markdown'
 Plug 'jtratner/vim-flavored-markdown'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'ap/vim-css-color'
-Plug 'autozimu/LanguageClient-neovim', { 'do': ':UpdateRemotePlugins' }
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 
 " JS Beautify
 Plug 'michalliu/jsruntime.vim'
@@ -107,8 +109,6 @@ Plug 'Shougo/deoplete.nvim', { 'do': 'UpdateRemotePlugins' }
 Plug 'Shougo/echodoc.vim'
 Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' }
 Plug 'awetzel/elixir.nvim', { 'for': 'exs' }
-Plug 'zchee/deoplete-clang'
-Plug 'vim-syntastic/syntastic'
 Plug 'tpope/vim-endwise'
 
 " Search
@@ -125,7 +125,6 @@ Plug 'tpope/vim-fugitive'
 call plug#end()
 " }}}
 " ##### Basic options  {{{
-" NeoVim Options
 " Display incomplete commands.
 set noshowcmd
 " Display the mode you're in.
@@ -165,6 +164,8 @@ set scrolloff=3
 
 " Set the terminal's title
 set title
+" Set the terminal's title to filename.
+set titlestring=%t
 " Don't blink screen on stuff
 set novb
 
@@ -189,8 +190,6 @@ set foldmethod=indent
 
 " Show the status line all the time
 set laststatus=2
-" Useful status information at bottom of screen
-set statusline=[%n]\ %<%.99f\ %h%w%m%r%y\ %{exists('*CapsLockStatusline')?CapsLockStatusline():''}%=%-16(\ %l,%c-%v\ %)%P
 
 " Always diff using vertical mode
 set diffopt+=vertical
@@ -216,7 +215,7 @@ let maplocalleader = "'"
 set splitbelow
 
 " Remove 'press any key to continue'
-set cmdheight=1
+set cmdheight=2
 
 " Disable fucked-up SQL completion
 let g:omni_sql_no_default_maps = 1
@@ -231,12 +230,6 @@ endif
 
 " }}}
 " ##### General mappings  {{{
-" ##### Tabs {{{
-nnoremap <leader>t :tabnew<cr>
-nnoremap <leader>e :tabedit
-nnoremap <leader>n :tabnext<cr>
-nnoremap <leader>p :tabprevious<cr>
-" }}}
 " ##### IDE Like {{{
 nmap <leader>1 :NERDTreeToggle<CR>
 nmap <leader>2 :TagbarToggle<CR>
@@ -267,13 +260,6 @@ map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 " }}}
-" ##### YouCompleteMe {{{
-nnoremap <localleader>gd :YcmCompleter GoToDefinition<cr>
-nnoremap <localleader>gr :YcmCompleter GoToReferences<cr>
-nnoremap <localleader>gk :YcmCompleter GetDoc<cr>
-nnoremap <localleader>gt :YcmCompleter GetType<cr>
-nnoremap <localleader>gR :YcmCompleter RefactorRename 
-" }}}
 " ##### Spell {{{
 set spelllang=en_us
 
@@ -284,17 +270,16 @@ nnoremap ,sc :set spell!<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
-" Wrap current paragraph
-noremap <leader>w gqap
+" Open terminal
+let termshell = systemlist('echo term://`which fish`')[0]
+execute 'noremap <leader>vsh :vsplit ' . termshell . '<CR>'
+execute 'noremap <leader>sh :split ' . termshell . '<CR><C-\><C-n>:resize 10<CR>i'
 
 " Toggles hlsearch
 nnoremap <leader>hs :set hlsearch!<cr>
 
 " Maps <C-C> to <esc>
 noremap <C-C> <esc>
-
-" Go full-screen
-nnoremap <leader>fs :set lines=999 columns=9999<cr>
 
 " Set current file executable
 nnoremap <leader>xx :!chmod +x %<cr>
@@ -313,12 +298,6 @@ if has('clipboard')
   set clipboard=unnamedplus
 endif
 
-vnoremap <leader>c "*y
-vnoremap <leader>v "*p
-vnoremap <leader>V "*P
-nnoremap <leader>v "*p
-nnoremap <leader>V "*P
-
 " Fix tmux navigation
 nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
 
@@ -330,33 +309,85 @@ nnoremap <c-down> <c-w>j
 " }}}
 " }}}
 " ##### Plugin settings  {{{
-" ##### Fugitive  {{{
-" (thanks to Steve Losh's vimrc)
-nnoremap <leader>gd :Gdiff<cr>
-nnoremap <leader>gs :Gstatus<cr>
-nnoremap <leader>gw :Gwrite<cr>
-nnoremap <leader>ga :Gadd<cr>
-nnoremap <leader>gb :Gblame<cr>
-nnoremap <leader>gci :Gcommit<cr>
-nnoremap <leader>ge :Gedit<cr>
-nnoremap <leader>gm :Gmove
-nnoremap <leader>gr :Gread<cr>
-nnoremap <leader>grm :Gremove<cr>
-nnoremap <leader>gp :Git push
+" ##### NERDTree {{{
+let NERDTreeMinimalUI=1
+let NERDTreeNaturalSort=1
+let g:NERDTreeGitStatusNodeColorization = 1
+let g:NERDTreeGitStatusIndicatorMap = {}
 " }}}
-" ##### NERDTree  {{{
-noremap <leader>ft :NERDTreeToggle<CR>
+" ##### Devicons {{{
+let g:webdevicons_enable = 1
+let g:webdevicons_enable_nerdtree = 1
+let g:WebDevIconsUnicodeGlyphDoubleWidth = 0
+let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1
 
-" Don't fuck up vim's default file browser
-let g:NERDTreeHijackNetrw = 0
-let NERDTreeMapActivateNode='<space>'
+if exists('g:loaded_webdevicons')
+  call webdevicons#refresh()
+endif
+
+autocmd FileType nerdtree setlocal nolist
+" }}}
+" ##### Tagbar  {{{
+let g:tagbar_type_javascript = {
+    \ 'kinds' : [
+        \ 'v:global variables:0:0',
+        \ 'c:classes',
+        \ 'p:properties:0:0',
+        \ 'm:methods',
+        \ 'f:functions',
+        \ '?:unknown',
+        \ 'd:describe test',
+        \ 'i:it test'
+    \ ],
+\ }
 " }}}
 " ##### Airline  {{{
-let g:airline_powerline_fonts = 1
-let g:airline#extensions#tabline#enabled = 1
 let g:airline_theme = 'gruvbox'
 let g:airline_section_warning = ''
 let g:airline_inactive_collapse = 0
+let g:airline_powerline_fonts = 1
+
+function! ModeChar ()
+  return toupper(mode())
+endfunction
+
+call airline#parts#define_function('mode', 'ModeChar')
+call airline#parts#define_minwidth('mode', 1)
+
+function! ReadonlyIndicator ()
+  if &readonly
+    return ''
+  endif
+
+  return ''
+endfunction
+
+call airline#parts#define_function('readonly', 'ReadonlyIndicator')
+call airline#parts#define_minwidth('readonly', 1)
+
+function! ModifiedIndicator ()
+  if &mod
+    return '●'
+  endif
+
+  return ''
+endfunction
+
+call airline#parts#define_function('modified', 'ModifiedIndicator')
+call airline#parts#define_minwidth('modified', 1)
+
+call airline#parts#define_function('icon', 'WebDevIconsGetFileTypeSymbol')
+call airline#parts#define_minwidth('icon', 1)
+
+let g:airline_section_a = airline#section#create_right(['mode'])
+let g:airline_section_b = airline#section#create(['branch'])
+let g:airline_section_c = airline#section#create([
+  \ '%<', 'readonly', 'modified', 'icon', ' %f '
+  \ ])
+let g:airline_section_x = airline#section#create_right([])
+let g:airline_section_y = airline#section#create_right([])
+let g:airline_section_z = airline#section#create_right(['%l:%c %L'])
+
 let g:airline#extensions#default#section_truncate_width = {
   \ 'a': 60,
   \ 'b': 80,
@@ -366,10 +397,15 @@ let g:airline#extensions#default#section_truncate_width = {
 \ }
 " }}}
 " ##### FZF  {{{
-let $FZF_DEFAULT_COMMAND = 'ag -g ""'
-
+" Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
 nnoremap <C-P> :Files<cr>
-nnoremap <C-F> :Ag 
+nnoremap <C-F> :Rg 
 nnoremap <C-B> :Buffers<cr>
 " }}}
 " ##### Yankstack  {{{
@@ -378,6 +414,9 @@ map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
 
 map <cr> <Plug>(miniyank-cycle)
+" }}}
+" ##### Closetag  {{{
+let g:closetag_filenames = '*.xhtml,*.js,*.jsx'
 " }}}
 " ##### Number toggle  {{{
 let g:NumberToggleTrigger="<leader>ll"
@@ -388,6 +427,12 @@ let g:jsx_ext_required = 0 " Allow JSX in normal JS files
 " ##### Terraform {{{
 let g:terraform_fmt_on_save = 1
 " }}}
+" ##### indent guides {{{
+let g:indentguides_spacechar = '┆'
+let g:indentguides_tabchar = '|'
+let g:indentguides_ignorelist = ['help', 'text', 'nerdtree']
+
+" }}}
 " ##### togglelist {{{
 let g:toggle_list_copen_command="Copen"
 " }}}
@@ -396,14 +441,14 @@ let g:localvimrc_whitelist=$HOME.'/Documents'
 let g:localvimrc_persistent=1
 " }}}
 " ##### editorconfig {{{
-let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*']
+let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*', 'term://.*']
 " }}}
-" ##### Syntastic {{{
-let g:syntastic_enable_highlighting = 0
-let g:syntastic_enable_balloons = 0
 " }}}
 " ##### deoplete {{{
 let g:deoplete#enable_at_startup = 1
+" }}}
+" ##### echodoc {{{
+let g:echodoc_enable_at_startup = 1
 " }}}
 " ##### deoplete-go {{{
 let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
@@ -415,17 +460,28 @@ set hidden
 
 let nodejs_prefix = systemlist('npm config get prefix')[0]
 
+set completefunc=LanguageClient#complete
+set formatexpr=LanguageClient_textDocument_rangeFormatting()
+
 let g:LanguageClient_serverCommands = {
-    \ 'javascript': [nodejs_prefix . '/lib/node_modules/javascript-typescript-langserver/lib/language-server-stdio.js'],
-    \ 'javascript.jsx': [nodejs_prefix . '/lib/node_modules/javascript-typescript-langserver/lib/language-server-stdio.js'],
+    \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
+    \ 'cpp': ['cquery', '--log-file=/tmp/cq.log'],
+    \ 'css': [nodejs_prefix . '/bin/css-languageserver', '--stdio'],
+    \ 'dockerfile': [nodejs_prefix . '/bin/docker-langserver', '--stdio'],
+    \ 'html': [nodejs_prefix . '/bin/html-languageserver', '--stdio'],
+    \ 'javascript': [nodejs_prefix . '/bin/language-server-stdio'],
+    \ 'javascript.jsx': [nodejs_prefix . '/bin/language-server-stdio'],
+    \ 'json': [nodejs_prefix . '/bin/vscode-json-languageserver', '--stdio'],
+    \ 'm': ['cquery', '--log-file=/tmp/cq.log'],
+    \ 'sh': [nodejs_prefix . '/bin/bash-language-server', 'start'],
     \ }
 
 " Automatically start language servers.
 let g:LanguageClient_autoStart = 1
 
-nnoremap <silent> <leader>hv :call LanguageClient_textDocument_hover()<CR>
-nnoremap <silent> <leader>gt :call LanguageClient_textDocument_definition()<CR>
-nnoremap <silent> <leader>rn :call LanguageClient_textDocument_rename()<CR>
+nnoremap <silent> <leader>hv :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> <leader>gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <leader>rn :call LanguageClient#textDocument_rename()<CR>
 " }}}
 " ##### Neomake {{{
 augroup neomake_save_linter
@@ -433,8 +489,6 @@ augroup neomake_save_linter
 	autocmd BufWritePost,BufReadPost * Neomake
 augroup end
 
-let g:neomake_javascript_standard_maker = { 'errorformat': '%E %f:%l:%c: %m' }
-let g:neomake_puppet_enabled_makers = ['puppet', 'puppetlint']
 " }}}
 " ##### vim-tmuxline.vim {{{
 let g:airline#extensions#tmuxline#enabled = 1
@@ -493,9 +547,6 @@ autocmd BufRead,BufNewFile *.md set wrap
 
 autocmd BufRead,BufNewFile *.js set shiftwidth=2
 autocmd BufRead,BufNewFile *.js set expandtab
-
-" Sets javascript syntax for *.json files.
-autocmd BufRead,BufNewFile *.json set filetype=javascript
 
 " Sets html syntax for *.ejs files.
 autocmd BufRead,BufNewFile *.ejs set filetype=html
