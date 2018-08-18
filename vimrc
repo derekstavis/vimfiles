@@ -80,6 +80,7 @@ Plug 'othree/yajs'
 Plug 'mxw/vim-jsx'
 Plug 'gkz/vim-ls'
 Plug 'kchmck/vim-coffee-script'
+Plug 'mtscout6/vim-cjsx'
 Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-packer'
 Plug 'hashivim/vim-consul'
@@ -109,6 +110,7 @@ Plug 'neomake/neomake'
 Plug 'Shougo/deoplete.nvim', { 'do': 'UpdateRemotePlugins' }
 Plug 'Shougo/echodoc.vim'
 Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' }
+Plug 'ponko2/deoplete-fish'
 Plug 'awetzel/elixir.nvim', { 'for': 'exs' }
 Plug 'tpope/vim-endwise'
 
