@@ -394,7 +394,7 @@ call airline#parts#define_minwidth('icon', 1)
 let g:airline_section_a = airline#section#create_right(['mode'])
 let g:airline_section_b = airline#section#create(['branch'])
 let g:airline_section_c = airline#section#create([
-  \ '%<', 'readonly', 'modified', 'icon', ' %f '
+  \ '%<', 'readonly', 'modified', 'icon', ' %{get(b:, "term_title", expand("%:t"))}'
   \ ])
 let g:airline_section_x = airline#section#create_right([])
 let g:airline_section_y = airline#section#create_right([])
