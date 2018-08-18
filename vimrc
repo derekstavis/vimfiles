@@ -539,6 +539,12 @@ autocmd FileType eruby set tabstop=4
 autocmd FileType ruby map aB ar
 autocmd FileType ruby map iB ir
 " }}}
+" ##### CoffeeScript  {{{
+" CJSX is also Coffee, with JSX
+autocmd BufRead,BufNewFile *.cjsx set filetype=coffee
+" Convert tabs to spaces in Coffee files
+autocmd FileType coffee set expandtab
+" }}}
 " ##### Puppet  {{{
 " Specific shiftwidth for puppet files
 autocmd BufRead,BufNewFile *.pp set filetype=puppet
