@@ -130,6 +130,8 @@ call plug#end()
 " ##### Basic options  {{{
 " Faster redraws
 set lazyredraw
+" Don't resize splits on change
+set noequalalways
 " Display incomplete commands.
 set noshowcmd
 " Display the mode you're in.
