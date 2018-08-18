@@ -128,6 +128,8 @@ Plug 'tpope/vim-fugitive'
 call plug#end()
 " }}}
 " ##### Basic options  {{{
+" Faster redraws
+set lazyredraw
 " Display incomplete commands.
 set noshowcmd
 " Display the mode you're in.
