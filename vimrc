@@ -63,6 +63,8 @@ Plug 'epilande/vim-react-snippets'
 Plug 'tomtom/tcomment_vim'
 Plug 'Shougo/vimproc.vim'
 Plug 'bfredl/nvim-miniyank'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-session'
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
