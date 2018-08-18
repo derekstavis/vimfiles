@@ -250,6 +250,11 @@ noremap L $
 cnoremap <C-A> <home>
 cnoremap <C-E> <end>
 " }}}
+" ##### Tabs {{{
+nnoremap <leader>tn :tabnew<CR>
+nnoremap <leader>t<Left> :tabprev<CR>
+nnoremap <leader>t<Right> :tabnext<CR>
+" }}}
 " ##### Folding {{{
 " Toggles folding with space
 nnoremap <Space> za
