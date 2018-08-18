@@ -20,7 +20,7 @@ autocmd BufWinEnter,WinEnter term://* startinsert
 autocmd BufLeave term://* stopinsert
 " "}}}
 
- " ##### Plug setup  {{{
+" ##### Plug setup  {{{
 call plug#begin('~/.vim/plugged')
 " "}}}
 " ##### Plugs  {{{
@@ -35,7 +35,6 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'milkypostman/vim-togglelist'
 Plug 'ton/vim-bufsurf'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'thaerkh/vim-indentguides'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'sjl/vitality.vim'
 Plug 'christoomey/vim-tmux-navigator'
