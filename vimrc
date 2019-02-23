@@ -16,7 +16,7 @@ tnoremap <silent> <C-up> <C-\><C-n><C-w><up>
 tnoremap <silent> <C-down> <C-\><C-n><C-w><down>
 tnoremap <silent> <C-left> <C-\><C-n><C-w><left>
 tnoremap <silent> <C-right> <C-\><C-n><C-w><right>
-autocmd BufWinEnter,WinEnter term://* startinsert
+" autocmd BufWinEnter,WinEnter term://* startinsert
 autocmd BufLeave term://* stopinsert
 " "}}}
 
@@ -29,13 +29,16 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'teranex/jk-jumps.vim'
 Plug 'scrooloose/nerdtree'
+Plug 'tsony-tsonev/nerdtree-git-plugin'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'milkypostman/vim-togglelist'
-Plug 'ton/vim-bufsurf'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'dhruvasagar/vim-buffer-history'
+Plug 'qpkorr/vim-bufkill'
 Plug 'ConradIrwin/vim-bracketed-paste'
+Plug 'sickill/vim-pasta'
 Plug 'sjl/vitality.vim'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'metakirby5/codi.vim'
@@ -46,8 +49,11 @@ Plug 'tpope/vim-abolish'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-eunuch'
 Plug 'alvan/vim-closetag'
-Plug 'edkolev/tmuxline.vim'
 Plug 'derekstavis/yanklight.vim'
+Plug 'troydm/zoomwintab.vim'
+Plug 'talek/obvious-resize'
+Plug 'wesQ3/vim-windowswap'
+Plug 'lucerion/vim-split-window-mods'
 
 " Support
 Plug 'tpope/vim-dispatch'
@@ -60,11 +66,13 @@ Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'epilande/vim-es2015-snippets'
 Plug 'epilande/vim-react-snippets'
+Plug 'jacobsmith/vim-react-refactor'
 Plug 'tomtom/tcomment_vim'
 Plug 'Shougo/vimproc.vim'
 Plug 'bfredl/nvim-miniyank'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-session'
+Plug 'alexander-alzate/vim-session'
+Plug 'wakatime/vim-wakatime'
+Plug 'ruanyl/vim-gh-line'
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
@@ -75,12 +83,12 @@ Plug 'rodjek/vim-puppet'
 Plug 'nsf/gocode', { 'rtp': 'nvim', 'do': '~/.config/nvim/plugged/gocode/nvim/symlink.sh' }
 Plug 'fatih/vim-go'
 Plug 'dag/vim-fish'
-Plug 'pangloss/vim-javascript'
+Plug 'HerringtonDarkholme/yats.vim'
 Plug 'othree/yajs'
-Plug 'mxw/vim-jsx'
+Plug 'jparise/vim-graphql'
 Plug 'gkz/vim-ls'
+Plug 'chemzqm/vim-jsx-improve'
 Plug 'kchmck/vim-coffee-script'
-Plug 'mtscout6/vim-cjsx'
 Plug 'hashivim/vim-terraform'
 Plug 'hashivim/vim-packer'
 Plug 'hashivim/vim-consul'
@@ -89,30 +97,29 @@ Plug 'juliosueiras/vim-terraform-completion'
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'digitaltoad/vim-pug'
-Plug 'zchee/deoplete-jedi'
 Plug 'uarun/vim-protobuf'
 Plug 'CyCoreSystems/vim-cisco-ios'
 Plug 'tpope/vim-markdown'
 Plug 'jtratner/vim-flavored-markdown'
+Plug 'elixir-editors/vim-elixir'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'ap/vim-css-color'
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
+" Plug 'autozimu/LanguageClient-neovim', {
+"     \ 'branch': 'next',
+"     \ 'do': 'bash install.sh',
+"     \ }
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+" Plug 'prabirshrestha/async.vim'
+" Plug 'prabirshrestha/vim-lsp'
 
 " JS Beautify
-Plug 'michalliu/jsruntime.vim'
-Plug 'michalliu/jsoncodecs.vim'
+Plug 'bcicen/vim-jfmt'
 
 " Omnicompletion
 Plug 'neomake/neomake'
-Plug 'Shougo/deoplete.nvim', { 'do': 'UpdateRemotePlugins' }
+Plug 'roxma/nvim-yarp'
 Plug 'Shougo/echodoc.vim'
-Plug 'zchee/deoplete-go', { 'do': 'make', 'for': 'go' }
-Plug 'ponko2/deoplete-fish'
 Plug 'awetzel/elixir.nvim', { 'for': 'exs' }
-Plug 'tpope/vim-endwise'
 
 " Search
 Plug 'haya14busa/incsearch.vim'
@@ -123,6 +130,7 @@ Plug 'lvht/tagbar-markdown'
 
 " Git
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 " }}}
 " ##### Plug post-setup {{{
 call plug#end()
@@ -132,15 +140,18 @@ call plug#end()
 set lazyredraw
 " Don't resize splits on change
 set noequalalways
+set eadirection=both
 " Display incomplete commands.
 set noshowcmd
 " Display the mode you're in.
 set showmode
+" Persist only visible buffers.
+set sessionoptions-=buffers
 
 " Intuitive backspacing.
 set backspace=indent,eol,start
-" Handle multiple buffers better.
-set hidden
+" Dont keep buffers forever.
+set nohidden
 
 " Enhanced command line completion.
 set wildmenu
@@ -175,13 +186,15 @@ set title
 set titlestring=%t
 " Don't blink screen on stuff
 set novb
+" Limit terminal's scrollback.
+set scrollback=65535
 
 " Don't make a backup before overwriting a file.
 set nobackup
 " And again.
 set nowritebackup
 " Keep swap files in one location
-set directory=$HOME/.vim/tmp//,.
+set directory=$HOME/.vim/tmp//
 
 " Global tab width.
 set tabstop=2
@@ -240,6 +253,8 @@ endif
 " ##### IDE Like {{{
 nmap <leader>1 :NERDTreeToggle<CR>
 nmap <leader>2 :TagbarToggle<CR>
+
+nmap <leader>ff :NERDTreeFind<CR>
 " }}}
 " ##### Line movement {{{
 " Go to start of line with H and to the end with $
@@ -252,8 +267,11 @@ cnoremap <C-E> <end>
 " }}}
 " ##### Tabs {{{
 nnoremap <leader>tn :tabnew<CR>
-nnoremap <leader>t<Left> :tabprev<CR>
-nnoremap <leader>t<Right> :tabnext<CR>
+nnoremap <leader>th :tabprev<CR>
+nnoremap <leader>tl :tabnext<CR>
+" }}}
+" ##### Focus {{{
+nnoremap <leader>fs :ZoomWinTabToggle<CR>
 " }}}
 " ##### Folding {{{
 " Toggles folding with space
@@ -299,11 +317,11 @@ nnoremap <leader>xx :!chmod +x %<cr>
 " Close Quickfix and Preview
 nnoremap <leader>q :pclose<cr>:cclose<cr>
 
-" Resize Panels with Shift
-nnoremap <S-Down> <c-w>+
-nnoremap <S-Up> <c-w>-
-nnoremap <S-Left> <c-w><
-nnoremap <S-Right> <c-w>>
+let g:obvious_resize_default = 8
+nnoremap <silent> <s-left> :<C-U>ObviousResizeLeft<CR>
+nnoremap <silent> <s-down> :<C-U>ObviousResizeDown<CR>
+nnoremap <silent> <s-up> :<C-U>ObviousResizeUp<CR>
+nnoremap <silent> <s-right> :<C-U>ObviousResizeRight<CR>
 
 " OS Clipboard
 if has('clipboard')
@@ -318,20 +336,34 @@ nnoremap <c-left> <c-w>h
 nnoremap <c-right> <c-w>l
 nnoremap <c-up> <c-w>k
 nnoremap <c-down> <c-w>j
+
+" Navigate buffer history
+noremap <leader><Left> :BufferHistoryBack<CR>
+noremap <leader><Right> :BufferHistoryForward<CR>
 " }}}
 " }}}
 " ##### Plugin settings  {{{
 " ##### NERDTree {{{
 let NERDTreeMinimalUI=1
 let NERDTreeNaturalSort=1
+
+" }}}
+" ##### NERDTree Git {{{
+let g:NERDTreeGitStatusWithFlags = 0
 let g:NERDTreeGitStatusNodeColorization = 1
-let g:NERDTreeGitStatusIndicatorMap = {}
+let g:NERDTreeColorMapCustom = {
+    \ "Modified"  : "#528AB3",
+    \ "Staged"    : "#538B54",
+    \ "Untracked" : "#BE5849",
+    \ "Dirty"     : "#299999",
+    \ "Clean"     : "#87939A",
+    \ "Ignored"   : "#808080"
+    \ }
 " }}}
 " ##### Devicons {{{
 let g:webdevicons_enable = 1
 let g:webdevicons_enable_nerdtree = 1
 let g:WebDevIconsUnicodeGlyphDoubleWidth = 0
-let g:WebDevIconsNerdTreeGitPluginForceVAlign = 1
 
 if exists('g:loaded_webdevicons')
   call webdevicons#refresh()
@@ -407,8 +439,14 @@ let g:airline#extensions#default#section_truncate_width = {
   \ 'y': 100,
   \ 'z': 60,
 \ }
+
+let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 " }}}
 " ##### FZF  {{{
+" Likewise, Files command with preview window
+command! -bang -nargs=? -complete=dir GFiles
+  \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
@@ -416,7 +454,7 @@ command! -bang -nargs=* Rg
   \   <bang>0 ? fzf#vim#with_preview('up:60%')
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
-nnoremap <C-P> :Files<cr>
+nnoremap <C-P> :GFiles<cr>
 nnoremap <C-F> :Rg 
 nnoremap <C-B> :Buffers<cr>
 " }}}
@@ -425,7 +463,7 @@ nnoremap <C-B> :Buffers<cr>
 map p <Plug>(miniyank-autoput)
 map P <Plug>(miniyank-autoPut)
 
-map <cr> <Plug>(miniyank-cycle)
+" map <cr> <Plug>(miniyank-cycle)
 " }}}
 " ##### Closetag  {{{
 let g:closetag_filenames = '*.xhtml,*.js,*.jsx'
@@ -455,61 +493,97 @@ let g:localvimrc_persistent=1
 " ##### editorconfig {{{
 let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*', 'term://.*']
 " }}}
-" }}}
-" ##### deoplete {{{
-let g:deoplete#enable_at_startup = 1
+
+" #### Prettier {{{
+let g:prettier#quickfix_enabled = 0
+let g:prettier#autoformat = 0
+" autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
 " }}}
 " ##### echodoc {{{
 let g:echodoc_enable_at_startup = 1
 " }}}
-" ##### deoplete-go {{{
-let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
-let g:deoplete#sources#go#use_cache = 1
+" ##### display images {{{
+"autocmd BufEnter *.png,*.jpg,*.gif exec "! kitty +kitten icat --transfer-mode=stream ".expand("%") | :bw
 " }}}
 " ##### language client {{{
+
 " Required for operations modifying multiple buffers like rename.
 set hidden
-
-let nodejs_prefix = systemlist('npm config get prefix')[0]
-
-set completefunc=LanguageClient#complete
-set formatexpr=LanguageClient_textDocument_rangeFormatting()
-
-let g:LanguageClient_serverCommands = {
-    \ 'c': ['cquery', '--log-file=/tmp/cq.log'],
-    \ 'cpp': ['cquery', '--log-file=/tmp/cq.log'],
-    \ 'css': [nodejs_prefix . '/bin/css-languageserver', '--stdio'],
-    \ 'dockerfile': [nodejs_prefix . '/bin/docker-langserver', '--stdio'],
-    \ 'html': [nodejs_prefix . '/bin/html-languageserver', '--stdio'],
-    \ 'javascript': [nodejs_prefix . '/bin/language-server-stdio'],
-    \ 'javascript.jsx': [nodejs_prefix . '/bin/language-server-stdio'],
-    \ 'json': [nodejs_prefix . '/bin/vscode-json-languageserver', '--stdio'],
-    \ 'm': ['cquery', '--log-file=/tmp/cq.log'],
-    \ 'sh': [nodejs_prefix . '/bin/bash-language-server', 'start'],
-    \ }
-
-" Automatically start language servers.
-let g:LanguageClient_autoStart = 1
-
-nnoremap <silent> <leader>hv :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> <leader>gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> <leader>rn :call LanguageClient#textDocument_rename()<CR>
-" }}}
+" Better visibility of messages
+set cmdheight=2
+" Smaller updatetime for CursorHold & CursorHoldI
+set updatetime=300
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+" always show signcolumns
+set signcolumn=yes
 " ##### Neomake {{{
 augroup neomake_save_linter
 	autocmd!
 	autocmd BufWritePost,BufReadPost * Neomake
 augroup end
-
 " }}}
-" ##### vim-tmuxline.vim {{{
-let g:airline#extensions#tmuxline#enabled = 1
-let g:tmuxline_preset = {
-  \'a'    : '%d %b %Y %H:%M',
-  \'b'    : '#W',
-  \'win'  : '#I #W',
-  \'cwin' : '#I #W',
-  \'z'    : '#h'}
+" ##### Language Client
+" Use `[c` and `]c` for navigate diagnostics
+nmap <silent> [c <Plug>(coc-diagnostic-prev)
+nmap <silent> ]c <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K for show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if &filetype == 'vim'
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+hi CocHighlightText cterm=underline
+hi link CocHighlightRead CocHighlightText
+hi link CocHighlightWrite CocHighlightText
+
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for format selected region
+vmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Remap Prettier
+nmap <silent> <leader>pp :CocCommand prettier.formatFile<CR>
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+vmap <leader>s  <Plug>(coc-codeaction-selected)
+nmap <leader>s  <Plug>(coc-codeaction-selected)
+
+" Remap for do codeAction of current line
+nmap <leader>ca  <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Use `:Format` for format current buffer
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` for fold current buffer
+command! -nargs=? Fold :call   CocAction('fold', <f-args>)
 " }}}
 " ##### Multiple cursors {{{
 let g:multi_cursor_exit_from_visual_mode = 0
