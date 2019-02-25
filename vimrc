@@ -517,6 +517,8 @@ set updatetime=300
 set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
+" Omnifunc
+set omnifunc=coc#refresh()
 " ##### Neomake {{{
 augroup neomake_save_linter
 	autocmd!
@@ -525,8 +527,9 @@ augroup end
 " }}}
 " ##### Language Client
 " Use `[c` and `]c` for navigate diagnostics
-nmap <silent> [c <Plug>(coc-diagnostic-prev)
-nmap <silent> ]c <Plug>(coc-diagnostic-next)
+nmap <silent> <leader>[ <Plug>(coc-diagnostic-prev)
+nmap <silent> <leader>] <Plug>(coc-diagnostic-next)
+nmap <silent> <leader>wtf <Plug>(coc-diagnostic-info)
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
@@ -536,6 +539,19 @@ nmap <silent> gr <Plug>(coc-references)
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for format selected region
+vmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+" Remap Prettier
+nmap <silent> <leader>pp :CocCommand prettier.formatFile<CR>
+
+" Use Ctrl-X to trigger complete popup
+inoremap <silent><expr> <c-x> coc#refresh()
 
 function! s:show_documentation()
   if &filetype == 'vim'
@@ -552,16 +568,6 @@ hi link CocHighlightWrite CocHighlightText
 
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
-" Remap for rename current word
-nmap <leader>rn <Plug>(coc-rename)
-
-" Remap for format selected region
-vmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
-
-" Remap Prettier
-nmap <silent> <leader>pp :CocCommand prettier.formatFile<CR>
-
 augroup mygroup
   autocmd!
   " Setup formatexpr specified filetype(s).
@@ -570,9 +576,9 @@ augroup mygroup
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
-" Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
-vmap <leader>s  <Plug>(coc-codeaction-selected)
-nmap <leader>s  <Plug>(coc-codeaction-selected)
+" Remap for do codeAction of selected region
+vmap <leader>vca  <Plug>(coc-codeaction-selected)
+nmap <leader>vca <Plug>(coc-codeaction-selected)
 
 " Remap for do codeAction of current line
 nmap <leader>ca  <Plug>(coc-codeaction)
