@@ -1,4 +1,40 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": ["css", "Markdown", "typescript", "typescript.tsx", "javascript", "javascript.jsx"],
-  "prettier.tslintIntegration": true
+  "coc.preferences.formatOnSaveFiletypes": [
+    "css",
+    "Markdown",
+    "typescript",
+    "typescript.tsx",
+    "javascript",
+    "javascript.jsx"
+  ],
+  "suggest.snippetIndicator": " ⭐︎",
+
+  "coc.preferences.previewAutoClose": false,
+  "coc.preferences.hoverTarget": "float",
+
+  "importCost.typescriptExtensions": [
+    "\\.tsx?$"
+  ],
+  "importCost.javascriptExtensions": [
+    "\\.jsx?$"
+  ],
+  "importCost.bundleSizeDecoration": "both",
+  "importCost.showCalculatingDecoration": true,
+  "importCost.debug": false,
+
+  "prettier.tslintIntegration": true,
+
+  "typescript.preferences.quoteStyle": "double",
+
+  "languageserver": {
+    "elixirLS": {
+      "command": "~/.local/share/elixir-ls/language_server.sh",
+      "filetypes": ["elixir", "eelixir", "ex"]
+    },
+    "ccls": {
+      "command": "jsref",
+      "args": ["--node-ipc"],
+      "filetypes": ["ts", "tsx", "js", "jsx"]
+    }
+  }
 }

@@ -16,7 +16,7 @@ tnoremap <silent> <C-up> <C-\><C-n><C-w><up>
 tnoremap <silent> <C-down> <C-\><C-n><C-w><down>
 tnoremap <silent> <C-left> <C-\><C-n><C-w><left>
 tnoremap <silent> <C-right> <C-\><C-n><C-w><right>
-" autocmd BufWinEnter,WinEnter term://* startinsert
+autocmd BufWinEnter,WinEnter term://* startinsert
 autocmd BufLeave term://* stopinsert
 " "}}}
 
@@ -35,25 +35,18 @@ Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'milkypostman/vim-togglelist'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
-Plug 'dhruvasagar/vim-buffer-history'
+Plug 'ckarnell/history-traverse'
 Plug 'qpkorr/vim-bufkill'
 Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'sickill/vim-pasta'
-Plug 'sjl/vitality.vim'
-Plug 'christoomey/vim-tmux-navigator'
 Plug 'metakirby5/codi.vim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'machakann/vim-highlightedyank'
-Plug 'tpope/vim-abolish'
-Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-eunuch'
-Plug 'alvan/vim-closetag'
 Plug 'derekstavis/yanklight.vim'
 Plug 'troydm/zoomwintab.vim'
 Plug 'talek/obvious-resize'
 Plug 'wesQ3/vim-windowswap'
-Plug 'lucerion/vim-split-window-mods'
 
 " Support
 Plug 'tpope/vim-dispatch'
@@ -68,7 +61,6 @@ Plug 'epilande/vim-es2015-snippets'
 Plug 'epilande/vim-react-snippets'
 Plug 'jacobsmith/vim-react-refactor'
 Plug 'tomtom/tcomment_vim'
-Plug 'Shougo/vimproc.vim'
 Plug 'bfredl/nvim-miniyank'
 Plug 'alexander-alzate/vim-session'
 Plug 'wakatime/vim-wakatime'
@@ -80,7 +72,6 @@ Plug 'morhetz/gruvbox'
 " Languages
 Plug 'b4winckler/vim-objc'
 Plug 'rodjek/vim-puppet'
-Plug 'nsf/gocode', { 'rtp': 'nvim', 'do': '~/.config/nvim/plugged/gocode/nvim/symlink.sh' }
 Plug 'fatih/vim-go'
 Plug 'dag/vim-fish'
 Plug 'HerringtonDarkholme/yats.vim'
@@ -103,30 +94,16 @@ Plug 'tpope/vim-markdown'
 Plug 'jtratner/vim-flavored-markdown'
 Plug 'elixir-editors/vim-elixir'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
-Plug 'ap/vim-css-color'
-" Plug 'autozimu/LanguageClient-neovim', {
-"     \ 'branch': 'next',
-"     \ 'do': 'bash install.sh',
-"     \ }
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-" Plug 'prabirshrestha/async.vim'
-" Plug 'prabirshrestha/vim-lsp'
-
-" JS Beautify
-Plug 'bcicen/vim-jfmt'
 
 " Omnicompletion
 Plug 'neomake/neomake'
-Plug 'roxma/nvim-yarp'
-Plug 'Shougo/echodoc.vim'
-Plug 'awetzel/elixir.nvim', { 'for': 'exs' }
 
 " Search
 Plug 'haya14busa/incsearch.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 Plug 'junegunn/fzf.vim'
-Plug 'majutsushi/tagbar'
-Plug 'lvht/tagbar-markdown'
+Plug 'liuchengxu/vista.vim'
 
 " Git
 Plug 'tpope/vim-fugitive'
@@ -138,6 +115,8 @@ call plug#end()
 " ##### Basic options  {{{
 " Faster redraws
 set lazyredraw
+" Use colors on GUI like VimR
+set termguicolors
 " Don't resize splits on change
 set noequalalways
 set eadirection=both
@@ -252,7 +231,7 @@ endif
 " ##### General mappings  {{{
 " ##### IDE Like {{{
 nmap <leader>1 :NERDTreeToggle<CR>
-nmap <leader>2 :TagbarToggle<CR>
+nmap <leader>2 :Vista!!<CR>
 
 nmap <leader>ff :NERDTreeFind<CR>
 " }}}
@@ -302,8 +281,9 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 
 " Open terminal
 let termshell = systemlist('echo term://`which fish`')[0]
+execute 'noremap <leader>tsh :tabnew ' . termshell . '<CR>'
 execute 'noremap <leader>vsh :vsplit ' . termshell . '<CR>'
-execute 'noremap <leader>sh :split ' . termshell . '<CR><C-\><C-n>:resize 10<CR>i'
+execute 'noremap <leader>sh :10split ' . termshell . '<CR>i'
 
 " Toggles hlsearch
 nnoremap <leader>hs :set hlsearch!<cr>
@@ -328,9 +308,6 @@ if has('clipboard')
   set clipboard=unnamedplus
 endif
 
-" Fix tmux navigation
-nnoremap <silent> <BS> :TmuxNavigateLeft<cr>
-
 " Navigate splits
 nnoremap <c-left> <c-w>h
 nnoremap <c-right> <c-w>l
@@ -338,8 +315,8 @@ nnoremap <c-up> <c-w>k
 nnoremap <c-down> <c-w>j
 
 " Navigate buffer history
-noremap <leader><Left> :BufferHistoryBack<CR>
-noremap <leader><Right> :BufferHistoryForward<CR>
+noremap <leader><Left> :HisTravBack<CR>
+noremap <leader><Right> :HisTravForward<CR>
 " }}}
 " }}}
 " ##### Plugin settings  {{{
@@ -370,20 +347,6 @@ if exists('g:loaded_webdevicons')
 endif
 
 autocmd FileType nerdtree setlocal nolist
-" }}}
-" ##### Tagbar  {{{
-let g:tagbar_type_javascript = {
-    \ 'kinds' : [
-        \ 'v:global variables:0:0',
-        \ 'c:classes',
-        \ 'p:properties:0:0',
-        \ 'm:methods',
-        \ 'f:functions',
-        \ '?:unknown',
-        \ 'd:describe test',
-        \ 'i:it test'
-    \ ],
-\ }
 " }}}
 " ##### Airline  {{{
 let g:airline_theme = 'gruvbox'
@@ -443,27 +406,64 @@ let g:airline#extensions#default#section_truncate_width = {
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 " }}}
+" ##### VISTA {{{
+let g:vista_default_executive = 'coc'
+let g:vista_echo_cursor_strategy = 'both'
+" }}}
 " ##### FZF  {{{
+let $FZF_DEFAULT_OPTS = '--layout=reverse'
+
+function! NewFloat()
+  let opts = {
+        \  'relative': 'editor',
+        \  'anchor': 'NW',
+        \  'col': float2nr((&columns - (&columns * 0.6))/2),
+        \  'row': 1,
+        \  'width': float2nr(&columns * 0.6),
+        \  'height': float2nr(&lines * 0.6)
+        \}
+
+  let b = nvim_create_buf(v:false, v:true)
+  let w = nvim_open_win(b, v:true, opts)
+  startinsert
+
+  call setwinvar(w, '&winhl', 'Normal:Pmenu')
+
+  setlocal
+        \ buftype=nofile
+        \ nobuflisted
+        \ bufhidden=hide
+        \ nonumber
+        \ norelativenumber
+        \ signcolumn=no
+
+endfunction
+
+let g:fzf_layout = { 'window': 'call NewFloat()' }
+
 " Likewise, Files command with preview window
 command! -bang -nargs=? -complete=dir GFiles
-  \ call fzf#vim#gitfiles(<q-args>, fzf#vim#with_preview(), <bang>0)
+  \ call fzf#vim#gitfiles(
+  \   <q-args>,
+  \   fzf#vim#with_preview()
+  \ )
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
   \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   fzf#vim#with_preview(),
   \   <bang>0)
 nnoremap <C-P> :GFiles<cr>
-nnoremap <C-F> :Rg 
+nnoremap <C-F> :Rg<cr>
 nnoremap <C-B> :Buffers<cr>
 " }}}
 " ##### Yankstack  {{{
 " Don't use default mappings
-map p <Plug>(miniyank-autoput)
-map P <Plug>(miniyank-autoPut)
+nmap p <Plug>(miniyank-autoput)
+nmap P <Plug>(miniyank-autoPut)
 
-" map <cr> <Plug>(miniyank-cycle)
+nmap <CR> <Plug>(miniyank-cycle)
+nmap <BS> <Plug>(miniyank-cycleback)
 " }}}
 " ##### Closetag  {{{
 let g:closetag_filenames = '*.xhtml,*.js,*.jsx'
@@ -517,8 +517,6 @@ set updatetime=300
 set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
-" Omnifunc
-set omnifunc=coc#refresh()
 " ##### Neomake {{{
 augroup neomake_save_linter
 	autocmd!
@@ -550,8 +548,25 @@ nmap <leader>f  <Plug>(coc-format-selected)
 " Remap Prettier
 nmap <silent> <leader>pp :CocCommand prettier.formatFile<CR>
 
-" Use Ctrl-X to trigger complete popup
-inoremap <silent><expr> <c-x> coc#refresh()
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
 function! s:show_documentation()
   if &filetype == 'vim'
