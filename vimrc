@@ -62,7 +62,7 @@ Plug 'epilande/vim-react-snippets'
 Plug 'jacobsmith/vim-react-refactor'
 Plug 'tomtom/tcomment_vim'
 Plug 'bfredl/nvim-miniyank'
-Plug 'alexander-alzate/vim-session'
+Plug 'skanehira/vsession'
 Plug 'wakatime/vim-wakatime'
 Plug 'ruanyl/vim-gh-line'
 
@@ -230,8 +230,8 @@ endif
 " }}}
 " ##### General mappings  {{{
 " ##### IDE Like {{{
-nmap <leader>1 :NERDTreeToggle<CR>
-nmap <leader>2 :Vista!!<CR>
+nmap <silent> <leader>1 :NERDTreeToggle<CR>
+nmap <silent> <leader>2 :Vista!!<CR>
 
 nmap <leader>ff :NERDTreeFind<CR>
 " }}}
@@ -283,7 +283,8 @@ nnoremap <leader>sv :source $MYVIMRC<cr>
 let termshell = systemlist('echo term://`which fish`')[0]
 execute 'noremap <leader>tsh :tabnew ' . termshell . '<CR>'
 execute 'noremap <leader>vsh :vsplit ' . termshell . '<CR>'
-execute 'noremap <leader>sh :10split ' . termshell . '<CR>i'
+execute 'noremap <leader>sh :10split ' . termshell . '<CR>'
+autocmd FileType gitcommit set bufhidden=delete
 
 " Toggles hlsearch
 nnoremap <leader>hs :set hlsearch!<cr>
@@ -350,7 +351,6 @@ autocmd FileType nerdtree setlocal nolist
 " }}}
 " ##### Airline  {{{
 let g:airline_theme = 'gruvbox'
-let g:airline_section_warning = ''
 let g:airline_inactive_collapse = 0
 let g:airline_powerline_fonts = 1
 
@@ -386,20 +386,27 @@ call airline#parts#define_minwidth('modified', 1)
 call airline#parts#define_function('icon', 'WebDevIconsGetFileTypeSymbol')
 call airline#parts#define_minwidth('icon', 1)
 
-let g:airline_section_a = airline#section#create_right(['mode'])
+let g:airline_section_a = airline#section#create(['mode'])
 let g:airline_section_b = airline#section#create(['branch'])
 let g:airline_section_c = airline#section#create([
-  \ '%<', 'readonly', 'modified', 'icon', ' %{get(b:, "term_title", expand("%:t"))}'
+  \ '%<', 'readonly', 'icon',
+  \ ' %{get(b:, "term_title", expand("%:t"))} ',
+  \ 'modified'
   \ ])
-let g:airline_section_x = airline#section#create_right([])
+
+let g:airline_section_x = airline#section#create_right([
+  \ '%{get(b:, "coc_current_function", "")}'
+  \ ])
 let g:airline_section_y = airline#section#create_right([])
-let g:airline_section_z = airline#section#create_right(['%l:%c %L'])
+let g:airline_section_z = airline#section#create_right([
+  \ '%l:%c %L'
+  \ ])
 
 let g:airline#extensions#default#section_truncate_width = {
   \ 'a': 60,
   \ 'b': 80,
   \ 'x': 100,
-  \ 'y': 100,
+  \ 'y': 30,
   \ 'z': 60,
 \ }
 
@@ -492,12 +499,6 @@ let g:localvimrc_persistent=1
 " }}}
 " ##### editorconfig {{{
 let g:EditorConfig_exclude_patterns = ['fugitive://.*', 'scp://.*', 'term://.*']
-" }}}
-
-" #### Prettier {{{
-let g:prettier#quickfix_enabled = 0
-let g:prettier#autoformat = 0
-" autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md,*.vue,*.yaml,*.html PrettierAsync
 " }}}
 " ##### echodoc {{{
 let g:echodoc_enable_at_startup = 1
@@ -720,4 +721,8 @@ autocmd FileType fish compiler fish
 autocmd FileType fish setlocal textwidth=79
 autocmd FileType fish setlocal foldmethod=expr
 " }}}
+" }}}
+" }}}
+" ##### Configure workspace {{{
+execute '10split ' . termshell
 " }}}

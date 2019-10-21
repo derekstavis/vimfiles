@@ -11,13 +11,11 @@
 
   "coc.preferences.previewAutoClose": false,
   "coc.preferences.hoverTarget": "float",
+  "coc.preferences.currentFunctionSymbolAutoUpdate": true,
+  "coc.preferences.formatOnType": true,
 
-  "importCost.typescriptExtensions": [
-    "\\.tsx?$"
-  ],
-  "importCost.javascriptExtensions": [
-    "\\.jsx?$"
-  ],
+  "importCost.typescriptExtensions": ["\\.tsx?$"],
+  "importCost.javascriptExtensions": ["\\.jsx?$"],
   "importCost.bundleSizeDecoration": "both",
   "importCost.showCalculatingDecoration": true,
   "importCost.debug": false,
@@ -27,14 +25,25 @@
   "typescript.preferences.quoteStyle": "double",
 
   "languageserver": {
-    "elixirLS": {
-      "command": "~/.local/share/elixir-ls/language_server.sh",
-      "filetypes": ["elixir", "eelixir", "ex"]
+    "jsref": {
+      "command": "~/.config/nvim/node_modules/.bin/jsref",
+      "filetypes": [
+        "typescript",
+        "typescript.tsx",
+        "javascript",
+        "javascript.jsx"
+      ]
     },
-    "ccls": {
-      "command": "jsref",
-      "args": ["--node-ipc"],
-      "filetypes": ["ts", "tsx", "js", "jsx"]
+    "apollo": {
+      "command": "~/.config/nvim/node_modules/apollo-language-server/lib/server.js",
+      "args": ["--stdio"],
+      "trace.server": "verbose",
+      "filetypes": [
+        "typescript",
+        "typescript.tsx",
+        "javascript",
+        "javascript.jsx"
+      ]
     }
   }
 }
