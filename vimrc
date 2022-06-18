@@ -28,10 +28,7 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'teranex/jk-jumps.vim'
-Plug 'scrooloose/nerdtree'
-Plug 'tsony-tsonev/nerdtree-git-plugin'
 Plug 'ryanoasis/vim-devicons'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'milkypostman/vim-togglelist'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
@@ -55,7 +52,6 @@ Plug 'editorconfig/editorconfig-vim'
 Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
 Plug 'Raimondi/delimitMate'
-Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'epilande/vim-es2015-snippets'
 Plug 'epilande/vim-react-snippets'
@@ -65,6 +61,7 @@ Plug 'bfredl/nvim-miniyank'
 Plug 'skanehira/vsession'
 Plug 'wakatime/vim-wakatime'
 Plug 'ruanyl/vim-gh-line'
+Plug 'ap/vim-css-color'
 
 " Colorschemes
 Plug 'morhetz/gruvbox'
@@ -94,7 +91,7 @@ Plug 'tpope/vim-markdown'
 Plug 'jtratner/vim-flavored-markdown'
 Plug 'elixir-editors/vim-elixir'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
 " Omnicompletion
 Plug 'neomake/neomake'
@@ -230,7 +227,7 @@ endif
 " }}}
 " ##### General mappings  {{{
 " ##### IDE Like {{{
-nmap <silent> <leader>1 :NERDTreeToggle<CR>
+nmap <silent> <leader>1 <Cmd>CocCommand explorer --toggle --focus<CR><CR>
 nmap <silent> <leader>2 :Vista!!<CR>
 
 nmap <leader>ff :NERDTreeFind<CR>

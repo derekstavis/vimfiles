@@ -4,15 +4,20 @@
     "Markdown",
     "typescript",
     "typescript.tsx",
+    "typescriptreact",
+    "javascriptreact",
     "javascript",
     "javascript.jsx"
   ],
   "suggest.snippetIndicator": " ⭐︎",
 
+  "cSpell.language": "en",
+
   "coc.preferences.previewAutoClose": false,
   "coc.preferences.hoverTarget": "float",
   "coc.preferences.currentFunctionSymbolAutoUpdate": true,
   "coc.preferences.formatOnType": true,
+  "hover.previewMaxHeight": 30,
 
   "importCost.typescriptExtensions": ["\\.tsx?$"],
   "importCost.javascriptExtensions": ["\\.jsx?$"],
@@ -24,26 +29,84 @@
 
   "typescript.preferences.quoteStyle": "double",
 
-  "languageserver": {
-    "jsref": {
-      "command": "~/.config/nvim/node_modules/.bin/jsref",
-      "filetypes": [
-        "typescript",
-        "typescript.tsx",
-        "javascript",
-        "javascript.jsx"
-      ]
-    },
-    "apollo": {
-      "command": "~/.config/nvim/node_modules/apollo-language-server/lib/server.js",
-      "args": ["--stdio"],
-      "trace.server": "verbose",
-      "filetypes": [
-        "typescript",
-        "typescript.tsx",
-        "javascript",
-        "javascript.jsx"
-      ]
-    }
-  }
+  "explorer.keyMappings.global": {
+    "i": false,
+    "<c-o>": "noop",
+
+    "*": "toggleSelection",
+    "m": ["wait", "actionMenu"],
+
+    "gk": ["wait", "expandablePrev"],
+    "gj": ["wait", "expandableNext"],
+    "h": ["wait", "collapse"],
+    "l": ["wait", "expandable?", "expand", "open"],
+    "J": ["wait", "toggleSelection", "normal:j"],
+    "K": ["wait", "toggleSelection", "normal:k"],
+    "gl": ["wait", "expand:recursive"],
+    "gh": ["wait", "collapse:recursive"],
+    "o": ["wait", "open"],
+    "<cr>": ["expandable?", ["expanded?", "collapse", "expand"], "open"],
+    "e": "open",
+    "es": "open:split",
+    "ev": "open:vsplit",
+    "et": "open:tab",
+    "<bs>": ["wait", "gotoParent"],
+    "gs": ["wait", "reveal:select"],
+    "il": "preview:labeling",
+    "ic": "preview:content",
+    "Il": "previewOnHover:toggle:labeling",
+    "Ic": "previewOnHover:toggle:content",
+    "II": "previewOnHover:disable",
+
+    "yp": "copyFilepath",
+    "yn": "copyFilename",
+    "yy": "copyFile",
+    "dd": "cutFile",
+    "p": "pasteFile",
+    "df": "delete",
+    "dF": "deleteForever",
+
+    "a": "addFile",
+    "A": "addDirectory",
+    "r": "rename",
+
+    "zh": "toggleHidden",
+    "g<dot>": "toggleHidden",
+    "R": "refresh",
+
+    "?": "help",
+    "q": "quit",
+    "<esc>": "esc",
+    "X": "systemExecute",
+    "gd": "listDrive",
+
+    "f": "search",
+    "F": "searchRecursive",
+
+    "gf": "gotoSource:file",
+    "gb": "gotoSource:buffer",
+
+    "[[": ["wait", "sourcePrev"],
+    "]]": ["wait", "sourceNext"],
+
+    "[i": ["wait", "indentPrev"],
+    "]i": ["wait", "indentNext"],
+
+    "[m": ["wait", "markPrev:modified"],
+    "]m": ["wait", "markNext:modified"],
+
+    "[d": ["wait", "markPrev:diagnosticError:diagnosticWarning"],
+    "]d": ["wait", "markNext:diagnosticError:diagnosticWarning"],
+    "[D": ["wait", "markPrev:diagnosticError"],
+    "]D": ["wait", "markNext:diagnosticError"],
+
+    "[c": ["wait", "markPrev:git"],
+    "]c": ["wait", "markNext:git"],
+    "<<": "gitStage",
+    ">>": "gitUnstage"
+  },
+  "cSpell.userWords": [
+    "rssi",
+    "wifi"
+  ]
 }
