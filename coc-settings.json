@@ -11,6 +11,11 @@
   ],
   "suggest.snippetIndicator": " ⭐︎",
 
+  "inlayHint.enable": true,
+  "inlayHint.display": true,
+  "inlayHint.enableParameter": true,
+  "inlayHint.refreshOnInsertMode": true,
+
   "cSpell.language": "en",
 
   "coc.preferences.previewAutoClose": false,
@@ -25,9 +30,29 @@
   "importCost.showCalculatingDecoration": true,
   "importCost.debug": false,
 
+  "codeLens.enable": true,
+
+  "list.floatPreview": true,
+  "suggest.floatConfig.winblend": 20,
+  "diagnostic.floatConfig.winblend": 20,
+  "signature.floatConfig.winblend": 20,
+  "hover.floatConfig.winblend": 20,
+  "floatFactory.floatConfig.winblend": 20,
+  "outline.autoPreview": true,
+
   "prettier.tslintIntegration": true,
+  "tsserver.useLocalTsdk": true,
+  "tsserver.maxTsServerMemory": 16000,
+
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
+
+  "javascript.inlayHints.parameterNames.enabled": "all",
+  "javascript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
 
   "typescript.preferences.quoteStyle": "double",
+  "semanticTokens.enable": true,
+  "biome.trace.server": "verbose",
 
   "explorer.keyMappings.global": {
     "i": false,
@@ -105,8 +130,5 @@
     "<<": "gitStage",
     ">>": "gitUnstage"
   },
-  "cSpell.userWords": [
-    "rssi",
-    "wifi"
-  ]
+  "cSpell.userWords": ["rssi", "wifi"]
 }

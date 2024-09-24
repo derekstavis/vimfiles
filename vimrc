@@ -4,10 +4,7 @@
 " Source  http://github.com/derekstavis/vimfiles
 
  " ##### Fix vim with fish  {{{
-
-if &shell =~# 'fish$'
-    set shell=sh
-endif
+set shell=sh
 
 " "}}}
 
@@ -16,7 +13,7 @@ tnoremap <silent> <C-up> <C-\><C-n><C-w><up>
 tnoremap <silent> <C-down> <C-\><C-n><C-w><down>
 tnoremap <silent> <C-left> <C-\><C-n><C-w><left>
 tnoremap <silent> <C-right> <C-\><C-n><C-w><right>
-autocmd BufWinEnter,WinEnter term://* startinsert
+" autocmd BufWinEnter,WinEnter term://* startinsert
 autocmd BufLeave term://* stopinsert
 " "}}}
 
@@ -28,34 +25,27 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'teranex/jk-jumps.vim'
+Plug 'mg979/vim-visual-multi'
 Plug 'ryanoasis/vim-devicons'
-Plug 'terryma/vim-multiple-cursors'
 Plug 'milkypostman/vim-togglelist'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'ckarnell/history-traverse'
-Plug 'qpkorr/vim-bufkill'
+Plug 'bit101/bufkill'
 Plug 'ConradIrwin/vim-bracketed-paste'
-Plug 'metakirby5/codi.vim'
+Plug 'HiPhish/rainbow-delimiters.nvim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'machakann/vim-highlightedyank'
-Plug 'tpope/vim-eunuch'
-Plug 'derekstavis/yanklight.vim'
 Plug 'troydm/zoomwintab.vim'
 Plug 'talek/obvious-resize'
 Plug 'wesQ3/vim-windowswap'
+Plug 'wfxr/minimap.vim'
+Plug 'm4xshen/smartcolumn.nvim'
 
 " Support
-Plug 'tpope/vim-dispatch'
 Plug 'embear/vim-localvimrc'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-surround'
-Plug 'Raimondi/delimitMate'
-Plug 'honza/vim-snippets'
-Plug 'epilande/vim-es2015-snippets'
-Plug 'epilande/vim-react-snippets'
-Plug 'jacobsmith/vim-react-refactor'
 Plug 'tomtom/tcomment_vim'
 Plug 'bfredl/nvim-miniyank'
 Plug 'skanehira/vsession'
@@ -86,25 +76,26 @@ Plug 'mustache/vim-mustache-handlebars'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'digitaltoad/vim-pug'
 Plug 'uarun/vim-protobuf'
-Plug 'CyCoreSystems/vim-cisco-ios'
 Plug 'tpope/vim-markdown'
 Plug 'jtratner/vim-flavored-markdown'
 Plug 'elixir-editors/vim-elixir'
 Plug 'Matt-Deacalion/vim-systemd-syntax'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
-
-" Omnicompletion
-Plug 'neomake/neomake'
+Plug 'RaafatTurki/hex.nvim'
+Plug 'OmniSharp/omnisharp-vim'
+Plug 'mfussenegger/nvim-dap'
+Plug 'zbirenbaum/copilot.lua'
 
 " Search
 Plug 'haya14busa/incsearch.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'liuchengxu/vista.vim'
 
 " Git
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+
+Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 " }}}
 " ##### Plug post-setup {{{
 call plug#end()
@@ -115,8 +106,7 @@ set lazyredraw
 " Use colors on GUI like VimR
 set termguicolors
 " Don't resize splits on change
-set noequalalways
-set eadirection=both
+set eadirection=hor
 " Display incomplete commands.
 set noshowcmd
 " Display the mode you're in.
@@ -197,18 +187,20 @@ set autoread
 syntax on
 
 " Use a better separator for splits
-set fillchars+=vert:│
+set fillchars+=eob:\ ,vert:│
 
 " Sets the colorscheme for terminal sessions too.
 set background=dark
+let g:gruvbox_contrast_dark = 'hard'
 colorscheme gruvbox
 
 " Leader = ,
 let mapleader = ","
 let maplocalleader = "'"
 
-" Open preview window below the code
+" Fix split opening direction
 set splitbelow
+set splitright
 
 " Remove 'press any key to continue'
 set cmdheight=2
@@ -230,7 +222,8 @@ endif
 nmap <silent> <leader>1 <Cmd>CocCommand explorer --toggle --focus<CR><CR>
 nmap <silent> <leader>2 :Vista!!<CR>
 
-nmap <leader>ff :NERDTreeFind<CR>
+let g:minimap_auto_start = 1
+
 " }}}
 " ##### Line movement {{{
 " Go to start of line with H and to the end with $
@@ -276,12 +269,14 @@ nnoremap ,sc :set spell!<cr>
 nnoremap <leader>ev :vsplit $MYVIMRC<cr>
 nnoremap <leader>sv :source $MYVIMRC<cr>
 
-" Open terminal
+" Terminal shortcuts
 let termshell = systemlist('echo term://`which fish`')[0]
+
 execute 'noremap <leader>tsh :tabnew ' . termshell . '<CR>'
 execute 'noremap <leader>vsh :vsplit ' . termshell . '<CR>'
 execute 'noremap <leader>sh :10split ' . termshell . '<CR>'
 autocmd FileType gitcommit set bufhidden=delete
+command BD bp|bd#
 
 " Toggles hlsearch
 nnoremap <leader>hs :set hlsearch!<cr>
@@ -421,9 +416,9 @@ function! NewFloat()
   let opts = {
         \  'relative': 'editor',
         \  'anchor': 'NW',
-        \  'col': float2nr((&columns - (&columns * 0.6))/2),
+        \  'col': float2nr((&columns - (&columns * 0.8))/2),
         \  'row': 1,
-        \  'width': float2nr(&columns * 0.6),
+        \  'width': float2nr(&columns * 0.8),
         \  'height': float2nr(&lines * 0.6)
         \}
 
@@ -448,7 +443,7 @@ let g:fzf_layout = { 'window': 'call NewFloat()' }
 " Likewise, Files command with preview window
 command! -bang -nargs=? -complete=dir GFiles
   \ call fzf#vim#gitfiles(
-  \   <q-args>,
+  \   getcwd(),
   \   fzf#vim#with_preview()
   \ )
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
@@ -515,13 +510,11 @@ set updatetime=300
 set shortmess+=c
 " always show signcolumns
 set signcolumn=yes
-" ##### Neomake {{{
-augroup neomake_save_linter
-	autocmd!
-	autocmd BufWritePost,BufReadPost * Neomake
-augroup end
-" }}}
 " ##### Language Client
+
+" Give more memory to Node
+let g:coc_node_args = ['--max-old-space-size=8192']
+
 " Use `[c` and `]c` for navigate diagnostics
 nmap <silent> <leader>[ <Plug>(coc-diagnostic-prev)
 nmap <silent> <leader>] <Plug>(coc-diagnostic-next)
@@ -546,25 +539,33 @@ nmap <leader>f  <Plug>(coc-format-selected)
 " Remap Prettier
 nmap <silent> <leader>pp :CocCommand prettier.formatFile<CR>
 
-" Use tab for trigger completion with characters ahead and navigate.
-" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-inoremap <silent><expr> <TAB>
-      \ pumvisible() ? "\<C-n>" :
-      \ <SID>check_back_space() ? "\<TAB>" :
-      \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-function! s:check_back_space() abort
+function! CheckBackspace() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" Use <c-space> to trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+" Use tab for trigger completion with characters ahead and navigate.
+" NOTE: There's always complete item selected by default, you may want to enable
+" no select by `"suggest.noselect": true` in your configuration file.
+" NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
+" other plugin before putting this into your config.
+inoremap <silent><expr> <TAB>
+      \ coc#pum#visible() ? coc#pum#next(1) :
+      \ CheckBackspace() ? "\<Tab>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
 
-" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
-" Coc only does snippet and additional edit on confirm.
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Make <CR> to accept selected completion item or notify coc.nvim to format
+" <C-g>u breaks current undo, please make your own choice.
+inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                              \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+" Use <c-space> to trigger completion.
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
 
 function! s:show_documentation()
   if &filetype == 'vim'
@@ -603,18 +604,46 @@ command! -nargs=0 Format :call CocAction('format')
 
 " Use `:Fold` for fold current buffer
 command! -nargs=? Fold :call   CocAction('fold', <f-args>)
+
+" Mappings for CoCList
+" Show all diagnostics.
+nnoremap <silent> <leader>d  :<C-u>CocList diagnostics<cr>
+" Manage extensions.
+nnoremap <silent> <leader>e  :<C-u>CocList extensions<cr>
+" Show commands.
+nnoremap <silent> <leader>c  :<C-u>CocList commands<cr>
+" Find symbol of current document.
+nnoremap <silent> <leader>o  :<C-u>CocList outline<cr>
+" Search workspace symbols.
+nnoremap <silent> <leader>s  :<C-u>CocList -I symbols<cr>
+" Resume latest coc list.
+nnoremap <silent> <leader>p  :<C-u>CocListResume<CR>
+" Open coc marketplace.
+nnoremap <silent> <leader>m  :<C-u>CocList marketplace<CR>
+
+""" Multiple cursors
+let g:VM_maps = {}
+let g:VM_maps["Add Cursor Down"] = '<A-Down>'
+let g:VM_maps["Add Cursor Up"]   = '<A-Up>'
+let g:VM_maps["Undo"]            = 'u'
+let g:VM_maps["Redo"]            = '<C-r>'
+let g:VM_maps["Select l"]        = ''
+let g:VM_maps["Select h"]        = ''
+
 " }}}
-" ##### Multiple cursors {{{
-let g:multi_cursor_exit_from_visual_mode = 0
-let g:multi_cursor_exit_from_insert_mode = 0
+" ##### Copilot {{{
+lua << EOF
 
-function! g:Multiple_cursors_before()
-  let g:deoplete#disable_auto_complete = 1
-endfunction
+require('copilot').setup({
+  suggestion = {
+    auto_trigger = true,
+    keymap = {
+      accept = "<C-Return>"
+    }
+  }
+})
 
-function! g:Multiple_cursors_after()
-  let g:deoplete#disable_auto_complete = 0
-endfunction
+EOF
 " }}}
 " ##### Filetype-specific  {{{
 " ##### Ruby  {{{
@@ -720,6 +749,17 @@ autocmd FileType fish setlocal foldmethod=expr
 " }}}
 " }}}
 " }}}
+
+autocmd BufEnter * if &buftype ==# 'terminal' | set signcolumn=no | endif
+function! Clear()
+    :execute "set scrollback=1"
+    :execute "set scrollback=-1"
+endfunction
+:command! -nargs=0 Clear :call Clear()
+
 " ##### Configure workspace {{{
-execute '10split ' . termshell
+" Open terminal if no terminal is open
+if len(filter(getbufinfo(), 'v:val.name =~ "term:"')) == 0
+  execute 'bot 14new ' . termshell . ' | wincmd p'
+endif
 " }}}
