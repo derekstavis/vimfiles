@@ -96,6 +96,9 @@ Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'olimorris/codecompanion.nvim'
 " }}}
 " ##### Plug post-setup {{{
 call plug#end()
@@ -513,7 +516,7 @@ set signcolumn=yes
 " ##### Language Client
 
 " Give more memory to Node
-let g:coc_node_args = ['--max-old-space-size=8192']
+let g:coc_node_args = ['--max-old-space-size=16384']
 
 " Use `[c` and `]c` for navigate diagnostics
 nmap <silent> <leader>[ <Plug>(coc-diagnostic-prev)
@@ -643,6 +646,15 @@ require('copilot').setup({
   }
 })
 
+EOF
+
+" ##### Code Companion {{{
+lua << EOF
+require("codecompanion").setup({
+  opts = {
+    log_level = "DEBUG", -- or "TRACE"
+  }
+})
 EOF
 " }}}
 " ##### Filetype-specific  {{{
