@@ -98,7 +98,17 @@ Plug 'tpope/vim-rhubarb'
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'olimorris/codecompanion.nvim'
+Plug 'stevearc/dressing.nvim'
+Plug 'MunifTanjim/nui.nvim'
+Plug 'MeanderingProgrammer/render-markdown.nvim'
+
+" Optional deps
+Plug 'hrsh7th/nvim-cmp'
+Plug 'nvim-tree/nvim-web-devicons' "or Plug 'echasnovski/mini.icons'
+Plug 'HakonHarnes/img-clip.nvim'
+
+" Yay, pass source=true if you want to build from source
+Plug 'yetone/avante.nvim', { 'branch': 'main', 'do': 'make' }
 " }}}
 " ##### Plug post-setup {{{
 call plug#end()
@@ -226,6 +236,28 @@ nmap <silent> <leader>1 <Cmd>CocCommand explorer --toggle --focus<CR><CR>
 nmap <silent> <leader>2 :Vista!!<CR>
 
 let g:minimap_auto_start = 1
+let g:minimap_fixed_width = 10
+let g:minimap_winid = -1
+
+" Function to enforce fixed width on the minimap window
+function! s:EnforceMinimapWidth()
+  if win_id2win(g:minimap_winid) > 0
+    call win_execute(g:minimap_winid, 'vertical resize ' . g:minimap_fixed_width)
+  endif
+endfunction
+
+" Setup when a minimap filetype is detected
+function! s:SetupMinimapSplit()
+  let g:minimap_winid = win_getid()
+  call s:EnforceMinimapWidth()
+endfunction
+
+" Autocommands
+augroup MinimapFixedWidth
+  autocmd!
+  autocmd FileType minimap call s:SetupMinimapSplit()
+  autocmd WinEnter,WinResized * call s:EnforceMinimapWidth()
+augroup END
 
 " }}}
 " ##### Line movement {{{
@@ -645,17 +677,21 @@ require('copilot').setup({
     }
   }
 })
-
 EOF
 
-" ##### Code Companion {{{
+autocmd! User avante.nvim
+
 lua << EOF
-require("codecompanion").setup({
-  opts = {
-    log_level = "DEBUG", -- or "TRACE"
-  }
+require('avante').setup({
+  provider = 'ollama',
+  ollama = {
+    endpoint = "http://127.0.0.1:11434", -- Note that there is no /v1 at the end.
+    model = "codestral",
+    stream = true
+  },
 })
 EOF
+
 " }}}
 " ##### Filetype-specific  {{{
 " ##### Ruby  {{{
