@@ -22,8 +22,8 @@ call plug#begin('~/.vim/plugged')
 " "}}}
 " ##### Plugs  {{{
 " Base
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+Plug 'nvim-tree/nvim-web-devicons'
+Plug 'nvim-lualine/lualine.nvim'
 Plug 'teranex/jk-jumps.vim'
 Plug 'mg979/vim-visual-multi'
 Plug 'ryanoasis/vim-devicons'
@@ -104,7 +104,6 @@ Plug 'MeanderingProgrammer/render-markdown.nvim'
 
 " Optional deps
 Plug 'hrsh7th/nvim-cmp'
-Plug 'nvim-tree/nvim-web-devicons' "or Plug 'echasnovski/mini.icons'
 Plug 'HakonHarnes/img-clip.nvim'
 
 " Yay, pass source=true if you want to build from source
@@ -348,101 +347,18 @@ noremap <leader><Right> :HisTravForward<CR>
 " }}}
 " }}}
 " ##### Plugin settings  {{{
-" ##### NERDTree {{{
-let NERDTreeMinimalUI=1
-let NERDTreeNaturalSort=1
-
-" }}}
-" ##### NERDTree Git {{{
-let g:NERDTreeGitStatusWithFlags = 0
-let g:NERDTreeGitStatusNodeColorization = 1
-let g:NERDTreeColorMapCustom = {
-    \ "Modified"  : "#528AB3",
-    \ "Staged"    : "#538B54",
-    \ "Untracked" : "#BE5849",
-    \ "Dirty"     : "#299999",
-    \ "Clean"     : "#87939A",
-    \ "Ignored"   : "#808080"
-    \ }
-" }}}
 " ##### Devicons {{{
 let g:webdevicons_enable = 1
-let g:webdevicons_enable_nerdtree = 1
 let g:WebDevIconsUnicodeGlyphDoubleWidth = 0
 
 if exists('g:loaded_webdevicons')
   call webdevicons#refresh()
 endif
-
-autocmd FileType nerdtree setlocal nolist
-" }}}
-" ##### Airline  {{{
-let g:airline_theme = 'gruvbox'
-let g:airline_inactive_collapse = 0
-let g:airline_powerline_fonts = 1
-
-function! ModeChar ()
-  return toupper(mode())
-endfunction
-
-call airline#parts#define_function('mode', 'ModeChar')
-call airline#parts#define_minwidth('mode', 1)
-
-function! ReadonlyIndicator ()
-  if &readonly
-    return ''
-  endif
-
-  return ''
-endfunction
-
-call airline#parts#define_function('readonly', 'ReadonlyIndicator')
-call airline#parts#define_minwidth('readonly', 1)
-
-function! ModifiedIndicator ()
-  if &mod
-    return '●'
-  endif
-
-  return ''
-endfunction
-
-call airline#parts#define_function('modified', 'ModifiedIndicator')
-call airline#parts#define_minwidth('modified', 1)
-
-call airline#parts#define_function('icon', 'WebDevIconsGetFileTypeSymbol')
-call airline#parts#define_minwidth('icon', 1)
-
-let g:airline_section_a = airline#section#create(['mode'])
-let g:airline_section_b = airline#section#create(['branch'])
-let g:airline_section_c = airline#section#create([
-  \ '%<', 'readonly', 'icon',
-  \ ' %{get(b:, "term_title", expand("%:t"))} ',
-  \ 'modified'
-  \ ])
-
-let g:airline_section_x = airline#section#create_right([
-  \ '%{get(b:, "coc_current_function", "")}'
-  \ ])
-let g:airline_section_y = airline#section#create_right([])
-let g:airline_section_z = airline#section#create_right([
-  \ '%l:%c %L'
-  \ ])
-
-let g:airline#extensions#default#section_truncate_width = {
-  \ 'a': 60,
-  \ 'b': 80,
-  \ 'x': 100,
-  \ 'y': 30,
-  \ 'z': 60,
-\ }
-
-let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
-let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 " }}}
 " ##### VISTA {{{
 let g:vista_default_executive = 'coc'
 let g:vista_echo_cursor_strategy = 'both'
+let g:vista_sidebar_open_cmd = 'rightbelow30vsplit'
 " }}}
 " ##### FZF  {{{
 let $FZF_DEFAULT_OPTS = '--layout=reverse'
@@ -514,7 +430,7 @@ let g:terraform_fmt_on_save = 1
 " ##### indent guides {{{
 let g:indentguides_spacechar = '┆'
 let g:indentguides_tabchar = '|'
-let g:indentguides_ignorelist = ['help', 'text', 'nerdtree']
+let g:indentguides_ignorelist = ['help', 'text']
 
 " }}}
 " ##### togglelist {{{
@@ -666,7 +582,7 @@ let g:VM_maps["Select l"]        = ''
 let g:VM_maps["Select h"]        = ''
 
 " }}}
-" ##### Copilot {{{
+
 lua << EOF
 
 require('copilot').setup({
@@ -677,11 +593,7 @@ require('copilot').setup({
     }
   }
 })
-EOF
 
-autocmd! User avante.nvim
-
-lua << EOF
 require('avante').setup({
   provider = 'ollama',
   ollama = {
@@ -690,7 +602,65 @@ require('avante').setup({
     stream = true
   },
 })
+
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'gruvbox_dark',
+    component_separators = { left = '', right = '' },
+    section_separators = { left = '', right = '' },
+    disabled_filetypes = { 'minimap', 'coc-explorer', 'vista' },
+    always_divide_middle = true,
+    globalstatus = false,
+    refresh = { statusline = 100, tabline = 100, winbar = 100 },
+    ignore_focus = {'minimap', 'coc-explorer', 'vista'},
+  },
+  sections = {
+    lualine_a = {
+      {
+        'mode',
+        fmt = function(str) return str:sub(1,1) end,
+      }
+    },
+    lualine_b = {
+      {
+        function()
+          local icon = vim.fn['WebDevIconsGetFileTypeSymbol']()
+          -- Use term title if available, else fallback to file name
+          local title = vim.b.term_title or vim.fn.expand('%:t')
+          local modified = vim.bo.modified and ' ●' or ''
+          return icon .. ' ' .. title .. modified
+        end,
+      },
+      {
+        'location',
+        cond = function()
+          return vim.bo.buftype ~= 'terminal'
+        end,
+      },
+    },
+    lualine_c = {},
+    lualine_x = {
+      {
+        function()
+          return vim.b.coc_current_function or ''
+        end,
+      },
+    },
+    lualine_y = {},
+    lualine_z = {
+      { 'branch' },
+    },
+  },
+  tabline = {},
+  winbar = {},
+  inactive_winbar = {},
+  extensions = {}
+}
+
 EOF
+
+autocmd! User avante.nvim
 
 " }}}
 " ##### Filetype-specific  {{{

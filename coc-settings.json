@@ -9,7 +9,6 @@
     "javascript",
     "javascript.jsx"
   ],
-  "suggest.snippetIndicator": " ⭐︎",
 
   "inlayHint.enable": true,
   "inlayHint.display": true,
