@@ -57,38 +57,13 @@ Plug 'ap/vim-css-color'
 Plug 'morhetz/gruvbox'
 
 " Languages
-Plug 'b4winckler/vim-objc'
-Plug 'rodjek/vim-puppet'
-Plug 'fatih/vim-go'
-Plug 'dag/vim-fish'
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'othree/yajs'
-Plug 'jparise/vim-graphql'
-Plug 'gkz/vim-ls'
-Plug 'chemzqm/vim-jsx-improve'
-Plug 'kchmck/vim-coffee-script'
-Plug 'hashivim/vim-terraform'
-Plug 'hashivim/vim-packer'
-Plug 'hashivim/vim-consul'
-Plug 'hashivim/vim-vaultproject'
-Plug 'juliosueiras/vim-terraform-completion'
-Plug 'mustache/vim-mustache-handlebars'
-Plug 'ekalinin/Dockerfile.vim'
-Plug 'digitaltoad/vim-pug'
-Plug 'uarun/vim-protobuf'
-Plug 'tpope/vim-markdown'
-Plug 'jtratner/vim-flavored-markdown'
-Plug 'elixir-editors/vim-elixir'
-Plug 'Matt-Deacalion/vim-systemd-syntax'
+Plug 'puremourning/vimspector'
 Plug 'RaafatTurki/hex.nvim'
-Plug 'OmniSharp/omnisharp-vim'
 Plug 'mfussenegger/nvim-dap'
-Plug 'zbirenbaum/copilot.lua'
 
 " Search
 Plug 'haya14busa/incsearch.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+Plug 'nvim-telescope/telescope.nvim'
 Plug 'liuchengxu/vista.vim'
 
 " Git
@@ -101,6 +76,7 @@ Plug 'nvim-treesitter/nvim-treesitter'
 Plug 'stevearc/dressing.nvim'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'MeanderingProgrammer/render-markdown.nvim'
+Plug 'zbirenbaum/copilot.lua'
 
 " Optional deps
 Plug 'hrsh7th/nvim-cmp'
@@ -309,7 +285,7 @@ let termshell = systemlist('echo term://`which fish`')[0]
 execute 'noremap <leader>tsh :tabnew ' . termshell . '<CR>'
 execute 'noremap <leader>vsh :vsplit ' . termshell . '<CR>'
 execute 'noremap <leader>sh :10split ' . termshell . '<CR>'
-autocmd FileType gitcommit set bufhidden=delete
+autocmd FileType gitcommit,gitrebase,gitconfig set bufhidden=delete
 command BD bp|bd#
 
 " Toggles hlsearch
@@ -340,6 +316,7 @@ nnoremap <c-left> <c-w>h
 nnoremap <c-right> <c-w>l
 nnoremap <c-up> <c-w>k
 nnoremap <c-down> <c-w>j
+nnoremap <CR> i
 
 " Navigate buffer history
 noremap <leader><Left> :HisTravBack<CR>
@@ -360,52 +337,11 @@ let g:vista_default_executive = 'coc'
 let g:vista_echo_cursor_strategy = 'both'
 let g:vista_sidebar_open_cmd = 'rightbelow30vsplit'
 " }}}
-" ##### FZF  {{{
-let $FZF_DEFAULT_OPTS = '--layout=reverse'
+" ##### Telescope  {{{
 
-function! NewFloat()
-  let opts = {
-        \  'relative': 'editor',
-        \  'anchor': 'NW',
-        \  'col': float2nr((&columns - (&columns * 0.8))/2),
-        \  'row': 1,
-        \  'width': float2nr(&columns * 0.8),
-        \  'height': float2nr(&lines * 0.6)
-        \}
-
-  let b = nvim_create_buf(v:false, v:true)
-  let w = nvim_open_win(b, v:true, opts)
-  startinsert
-
-  call setwinvar(w, '&winhl', 'Normal:Pmenu')
-
-  setlocal
-        \ buftype=nofile
-        \ nobuflisted
-        \ bufhidden=hide
-        \ nonumber
-        \ norelativenumber
-        \ signcolumn=no
-
-endfunction
-
-let g:fzf_layout = { 'window': 'call NewFloat()' }
-
-" Likewise, Files command with preview window
-command! -bang -nargs=? -complete=dir GFiles
-  \ call fzf#vim#gitfiles(
-  \   getcwd(),
-  \   fzf#vim#with_preview()
-  \ )
-" Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
-command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always '.shellescape(<q-args>), 1,
-  \   fzf#vim#with_preview(),
-  \   <bang>0)
-nnoremap <C-P> :GFiles<cr>
-nnoremap <C-F> :Rg<cr>
-nnoremap <C-B> :Buffers<cr>
+nnoremap <C-P> :Telescope find_files<cr>
+nnoremap <C-F> :Telescope live_grep<cr>
+nnoremap <C-B> :Telescope buffers<cr>
 " }}}
 " ##### Yankstack  {{{
 " Don't use default mappings
@@ -571,8 +507,17 @@ nnoremap <silent> <leader>s  :<C-u>CocList -I symbols<cr>
 nnoremap <silent> <leader>p  :<C-u>CocListResume<CR>
 " Open coc marketplace.
 nnoremap <silent> <leader>m  :<C-u>CocList marketplace<CR>
-
-""" Multiple cursors
+" }}}
+" ##### Vimspector {{{
+nnoremap <leader>bp :call vimspector#ToggleBreakpoint()<cr>
+nnoremap <leader>rp :call vimspector#Launch()<cr>
+nnoremap <leader>kp :call vimspector#Reset()<cr>
+nnoremap <C-[> :call vimspector#StepOver()<cr>
+nnoremap <C-{> :call vimspector#StepInto()<cr>
+nnoremap <C-]> :call vimspector#StepOut()<cr>
+nnoremap <C-}> :call vimspector#Continue()<cr>
+" }}}
+" ##### Multiple cursors {{{
 let g:VM_maps = {}
 let g:VM_maps["Add Cursor Down"] = '<A-Down>'
 let g:VM_maps["Add Cursor Up"]   = '<A-Up>'
@@ -580,10 +525,36 @@ let g:VM_maps["Undo"]            = 'u'
 let g:VM_maps["Redo"]            = '<C-r>'
 let g:VM_maps["Select l"]        = ''
 let g:VM_maps["Select h"]        = ''
-
 " }}}
 
 lua << EOF
+require("telescope").setup({
+  defaults = {
+    layout_strategy = "horizontal",
+    layout_config = {
+      anchor = "N",
+      anchor_padding = 5,
+      prompt_position = "top",    -- Search box pinned at the top
+      horizontal = {
+        preview_width = 0.6,      -- Preview on the right
+      },
+      height = 0.5,              -- Almost full height
+      width = 0.6,               -- Almost full width
+    },
+    sorting_strategy = "ascending", -- Results sorted top-down
+    winblend = 0,
+  },
+  pickers = {
+    find_files = {
+      hidden = true,
+    },
+  },
+})
+
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "typescript", "python" },
+  highlight = { enable = true },
+}
 
 require('copilot').setup({
   suggestion = {
@@ -595,11 +566,13 @@ require('copilot').setup({
 })
 
 require('avante').setup({
-  provider = 'ollama',
-  ollama = {
-    endpoint = "http://127.0.0.1:11434", -- Note that there is no /v1 at the end.
-    model = "codestral",
-    stream = true
+  provider = 'claude',
+  providers = {
+    claude = {
+      extra_request_body = {
+        max_tokens = 200000,
+      }
+    },
   },
 })
 
