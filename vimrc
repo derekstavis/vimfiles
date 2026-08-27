@@ -30,7 +30,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'milkypostman/vim-togglelist'
 Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'ckarnell/history-traverse'
-Plug 'bit101/bufkill'
+Plug 'https://codeberg.org/bit101/bufkill'
 Plug 'ConradIrwin/vim-bracketed-paste'
 Plug 'HiPhish/rainbow-delimiters.nvim'
 Plug 'AndrewRadev/splitjoin.vim'
@@ -39,8 +39,8 @@ Plug 'machakann/vim-highlightedyank'
 Plug 'troydm/zoomwintab.vim'
 Plug 'talek/obvious-resize'
 Plug 'wesQ3/vim-windowswap'
-Plug 'wfxr/minimap.vim'
 Plug 'm4xshen/smartcolumn.nvim'
+Plug 'klen/nvim-config-local'
 
 " Support
 Plug 'embear/vim-localvimrc'
@@ -57,9 +57,11 @@ Plug 'ap/vim-css-color'
 Plug 'morhetz/gruvbox'
 
 " Languages
-Plug 'puremourning/vimspector'
 Plug 'RaafatTurki/hex.nvim'
 Plug 'mfussenegger/nvim-dap'
+Plug 'nvim-neotest/nvim-nio'
+Plug 'rcarriga/nvim-dap-ui'
+Plug 'theHamsta/nvim-dap-virtual-text'
 
 " Search
 Plug 'haya14busa/incsearch.vim'
@@ -69,6 +71,7 @@ Plug 'liuchengxu/vista.vim'
 " Git
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+Plug 'sindrets/diffview.nvim'
 
 Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'nvim-lua/plenary.nvim'
@@ -210,28 +213,9 @@ endif
 nmap <silent> <leader>1 <Cmd>CocCommand explorer --toggle --focus<CR><CR>
 nmap <silent> <leader>2 :Vista!!<CR>
 
-let g:minimap_auto_start = 1
-let g:minimap_fixed_width = 10
-let g:minimap_winid = -1
-
-" Function to enforce fixed width on the minimap window
-function! s:EnforceMinimapWidth()
-  if win_id2win(g:minimap_winid) > 0
-    call win_execute(g:minimap_winid, 'vertical resize ' . g:minimap_fixed_width)
-  endif
-endfunction
-
-" Setup when a minimap filetype is detected
-function! s:SetupMinimapSplit()
-  let g:minimap_winid = win_getid()
-  call s:EnforceMinimapWidth()
-endfunction
-
-" Autocommands
-augroup MinimapFixedWidth
-  autocmd!
-  autocmd FileType minimap call s:SetupMinimapSplit()
-  autocmd WinEnter,WinResized * call s:EnforceMinimapWidth()
+augroup uvml_ft
+  au!
+  autocmd BufNewFile,BufRead *.uvml set filetype=uvml
 augroup END
 
 " }}}
@@ -409,7 +393,7 @@ nmap <silent> <leader>wtf <Plug>(coc-diagnostic-info)
 
 " Remap keys for gotos
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gt <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
@@ -424,7 +408,7 @@ vmap <leader>f  <Plug>(coc-format-selected)
 nmap <leader>f  <Plug>(coc-format-selected)
 
 " Remap Prettier
-nmap <silent> <leader>pp :CocCommand prettier.formatFile<CR>
+nmap <silent> <leader>pp :call CocAction('format')<CR>
 
 function! CheckBackspace() abort
   let col = col('.') - 1
@@ -508,14 +492,14 @@ nnoremap <silent> <leader>p  :<C-u>CocListResume<CR>
 " Open coc marketplace.
 nnoremap <silent> <leader>m  :<C-u>CocList marketplace<CR>
 " }}}
-" ##### Vimspector {{{
-nnoremap <leader>bp :call vimspector#ToggleBreakpoint()<cr>
-nnoremap <leader>rp :call vimspector#Launch()<cr>
-nnoremap <leader>kp :call vimspector#Reset()<cr>
-nnoremap <C-[> :call vimspector#StepOver()<cr>
-nnoremap <C-{> :call vimspector#StepInto()<cr>
-nnoremap <C-]> :call vimspector#StepOut()<cr>
-nnoremap <C-}> :call vimspector#Continue()<cr>
+" ##### debugger {{{
+nnoremap <leader>bp :DapToggleBreakpoint<cr>
+nnoremap <leader>rp :DapNew<cr>
+nnoremap <leader>kp :DapDisconnect<cr>
+nnoremap <C-[> :DapStepOver<cr>
+nnoremap <C-{> :DapStepInto<cr>
+nnoremap <C-]> :DapStepOut<cr>
+nnoremap <C-}> :DapContinue<cr>
 " }}}
 " ##### Multiple cursors {{{
 let g:VM_maps = {}
@@ -543,6 +527,14 @@ require("telescope").setup({
     },
     sorting_strategy = "ascending", -- Results sorted top-down
     winblend = 0,
+    -- preview = {
+    --  treesitter = {
+    --    disable = { "haskell" }
+    --  },
+    --},
+    file_ignore_patterns = {
+      ".git/",
+    }
   },
   pickers = {
     find_files = {
@@ -551,19 +543,41 @@ require("telescope").setup({
   },
 })
 
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = { "typescript", "python" },
-  highlight = { enable = true },
+require "nvim-treesitter".install {
+  "typescript", "python", "haskell", "lua", "rust"
 }
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'rust',
+  callback = function() vim.treesitter.start() end,
+})
+
 
 require('copilot').setup({
   suggestion = {
     auto_trigger = true,
+    auto_refresh = true,
     keymap = {
       accept = "<C-Return>"
     }
   }
 })
+
+local dap, dapui = require("dap"), require("dapui")
+dapui.setup()
+
+dap.listeners.before.attach.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.launch.dapui_config = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated.dapui_config = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited.dapui_config = function()
+  dapui.close()
+end
 
 require('avante').setup({
   provider = 'claude',
@@ -630,6 +644,10 @@ require('lualine').setup {
   inactive_winbar = {},
   extensions = {}
 }
+
+require('config-local').setup({
+  config_files = { ".nvim.lua" },
+})
 
 EOF
 
