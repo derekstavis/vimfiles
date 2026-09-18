@@ -1,0 +1,22 @@
+{
+  "Console log": {
+    "prefix": "log",
+    "body": "console.log(${1});"
+  },
+  "Timeout": {
+    "prefix": "setTimeout",
+    "body": [
+      "setTimeout(function(){",
+      "\t${1}",
+      "}, ${2});"
+    ]
+  },
+  "JSX element": {
+    "prefix": "<",
+    "body": [
+      "<${1:tag}>",
+      "\t${TM_SELECTED_TEXT:{children}}",
+      "</$1>"
+    ]
+  }
+}

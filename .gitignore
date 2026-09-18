@@ -1,8 +1,4 @@
-tmp/
-bundle/
-!bundle/Vundle.vim
 *.swp
+*.swo
 .netrwhist
-.init.vim-rplugin~
-.-rplugin~
-plugged
+nvim.log
