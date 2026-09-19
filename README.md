@@ -144,6 +144,11 @@ Open `:Git` for the repository status view. Use `s` to stage the file or hunk
 under the cursor and `u` to unstage it, then `:Git commit` to write a commit.
 Git subcommands are available through `:Git`, such as `:Git diff`.
 
+With `nvr` installed, `git config --global core.editor 'nvr --remote-wait-silent'`
+opens commit messages in the focused split of the running Neovim. When invoked
+from a terminal panel, save the message with `:write`, then use `:BD` to return
+to the calling terminal and let Git continue.
+
 Use `:DiffviewOpen` for a diff review tab, `:DiffviewFileHistory %` for the current
 file's history, and `:DiffviewClose` to close the review.
 
@@ -224,7 +229,8 @@ update supported installed parsers. Custom parsers such as UVML are managed
 separately.
 
 Run the configuration checks from this repository after installing tools and
-parsers. The UI check requires an interactive terminal.
+parsers. The UI check requires an interactive terminal and `nvr` for the remote
+Git-editor test.
 
 ```sh
 nvim --headless --cmd 'let g:loaded_wakatime = 1' -c 'luafile tests/smoke.lua'

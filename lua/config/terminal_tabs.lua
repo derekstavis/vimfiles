@@ -2,6 +2,7 @@ local M = {}
 local windows = require('tiny-term.window')
 local terminals = require('tiny-term.terminal')
 local shell_icon = MiniIcons.get('filetype', 'sh')
+local statusline = "%!v:lua.require'config.terminal_tabs'.render()"
 
 local function nonempty(value)
   return type(value) == 'string' and value ~= '' and value or nil
@@ -73,15 +74,24 @@ function M.apply(win)
   end
   if vim.bo[buf].filetype == 'tiny_term' then
     vim.wo[win].winbar = ''
-    vim.wo[win].statusline = "%!v:lua.require'config.terminal_tabs'.render()"
+    vim.wo[win].statusline = statusline
   elseif vim.bo[buf].buftype == 'terminal' and vim.bo[buf].filetype == 'terminal' then
     vim.wo[win].winbar = ''
-    vim.wo[win].statusline = "%!v:lua.require'config.terminal_tabs'.render()"
+    vim.wo[win].statusline = statusline
   end
 end
 
 function M.setup()
   highlights()
+  -- Disabled filetypes still let lualine clear a window's cached statusline.
+  -- Return our terminal line on every refresh, including after buffer switches.
+  local lualine = require('lualine')
+  lualine.config_terminal_original_statusline = lualine.config_terminal_original_statusline or lualine.statusline
+  local original_statusline = lualine.config_terminal_original_statusline
+  lualine.statusline = function(...)
+    if vim.bo.buftype == 'terminal' then return statusline end
+    return original_statusline(...)
+  end
   -- The plugin recreates its top winbar when opening or selecting a terminal.
   -- Replace it immediately, retaining its tab registry and click handlers.
   windows.config_tabline_originals = windows.config_tabline_originals or {

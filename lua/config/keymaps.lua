@@ -125,7 +125,16 @@ end, 'Next terminal / debug step out')
 nmap('<C-}>', function() require('dap').continue() end, 'Debug continue')
 nmap('<leader>xb', [[<Cmd>%s/>[ \t]*</>\r</g<CR>gg=G]], 'Expand and indent XML')
 
-vim.api.nvim_create_user_command('BD', function(opts) MiniBufremove.delete(0, opts.bang) end, { bang = true })
+vim.api.nvim_create_user_command('BD', function(opts)
+  local win, alternate = vim.api.nvim_get_current_win(), vim.fn.bufnr('#')
+  local return_to_terminal = vim.bo.buftype ~= 'terminal' and alternate > 0
+    and vim.api.nvim_buf_is_valid(alternate) and vim.bo[alternate].buftype == 'terminal'
+  -- mini.bufremove skips unlisted terminals when selecting a replacement buffer.
+  if MiniBufremove.delete(0, opts.bang) and return_to_terminal
+    and vim.api.nvim_win_is_valid(win) and vim.api.nvim_buf_is_valid(alternate) then
+    vim.api.nvim_win_set_buf(win, alternate)
+  end
+end, { bang = true })
 vim.api.nvim_create_user_command('StripWhitespace', MiniTrailspace.trim, {})
 vim.api.nvim_create_user_command('Clear', function()
   local scrollback = vim.bo.scrollback

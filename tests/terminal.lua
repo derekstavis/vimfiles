@@ -20,6 +20,64 @@ local tabs = check_bar(win)
 local shell_icon = MiniIcons.get('filetype', 'sh')
 assert(tabs:find('1 ' .. shell_icon, 1, true) and tabs:find('2 ' .. shell_icon, 1, true), 'Both tabs must show Nerd Font shell icons')
 assert(tabs:find('', 1, true), 'Terminal tabs must use lualine-style separators')
+local replacement = vim.api.nvim_create_buf(true, false)
+vim.api.nvim_buf_set_name(replacement, vim.fn.tempname() .. '.txt')
+for _ = 1, 2 do
+  vim.api.nvim_win_set_buf(win, replacement)
+  require('lualine').refresh({ scope = 'all', force = true })
+  assert(not vim.wo[win].statusline:find('config.terminal_tabs', 1, true), 'Editor buffers must show the regular statusline')
+  vim.api.nvim_win_set_buf(win, second.buf)
+  check_bar(win)
+  vim.api.nvim_set_current_win(editor)
+  check_bar(win)
+  vim.api.nvim_set_current_win(win)
+  require('config.terminal_tabs').setup()
+  check_bar(win)
+end
+vim.api.nvim_buf_delete(replacement, { force = true })
+-- Run the remote editor from the shell so deleting its buffer must unblock nvr.
+assert(vim.fn.executable('nvr') == 1, 'The terminal editor test requires nvr')
+local edit_dir = vim.fn.tempname()
+vim.fn.mkdir(edit_dir, 'p')
+local commit_file, resumed = edit_dir .. '/COMMIT_EDITMSG', edit_dir .. '/resumed'
+vim.fn.writefile({ '# Write a commit message' }, commit_file)
+local edit_command = table.concat({
+  vim.fn.shellescape(vim.fn.exepath('nvr')), '--servername', vim.fn.shellescape(vim.v.servername),
+  '--remote-wait', vim.fn.shellescape(commit_file),
+  '&& printf resumed >', vim.fn.shellescape(resumed),
+}, ' ')
+local panel_height = vim.api.nvim_win_get_height(win)
+local function wait_for_remote(predicate)
+  for _ = 1, 250 do
+    if predicate() then return true end
+    local thread = coroutine.running()
+    vim.defer_fn(function() assert(coroutine.resume(thread)) end, 20)
+    coroutine.yield()
+  end
+  return predicate()
+end
+vim.api.nvim_chan_send(second.job_id, 'sh -c ' .. vim.fn.shellescape(edit_command) .. '\r')
+assert(wait_for_remote(function()
+  return vim.uv.fs_realpath(vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win))) == vim.uv.fs_realpath(commit_file)
+end), 'nvr must open the commit message in the calling terminal split: ' .. vim.inspect({
+  expected = commit_file, actual = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(win)),
+}))
+local commit_buf = vim.api.nvim_win_get_buf(win)
+assert(vim.bo[commit_buf].filetype == 'gitcommit', 'Expected a Git editor buffer')
+assert(vim.fn.filereadable(resumed) == 0, 'nvr must wait until its buffer is deleted')
+require('lualine').refresh({ scope = 'all', force = true })
+vim.api.nvim_buf_set_lines(commit_buf, 0, -1, false, { 'Test terminal editor round trip' })
+vim.cmd('silent write')
+vim.cmd.BD()
+assert(vim.api.nvim_win_get_buf(win) == second.buf, ':BD must return to the terminal that called nvr')
+assert(wait_for_remote(function() return vim.fn.filereadable(resumed) == 1 end), ':BD must release nvr and resume the shell')
+assert(vim.fn.readfile(commit_file)[1] == 'Test terminal editor round trip', 'The commit message must be saved')
+assert(#vim.api.nvim_list_wins() == count and vim.api.nvim_win_get_height(win) == panel_height,
+  'The remote editor must preserve the terminal split layout')
+assert(vim.w[win].tiny_term_id == second.id and #windows.get_split_terminals(win) == 2,
+  'Returning from nvr must preserve the active terminal and its tabs')
+check_bar(win)
+vim.fn.delete(edit_dir, 'rf')
 local labels = require('config.terminal_tabs')
 local fixture = vim.api.nvim_create_buf(false, true)
 vim.b[fixture].osc7_dir, vim.b[fixture].term_title = '/work/project', 'Fallback title'
