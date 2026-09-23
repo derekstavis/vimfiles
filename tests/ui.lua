@@ -18,8 +18,10 @@ local function run()
   vim.fn.maparg(',fs', 'n', false, true).callback()
   assert(vim.api.nvim_win_get_config(0).relative == '', 'Focus must restore the split')
   assert(loadfile(vim.fn.stdpath('config') .. '/tests/terminal.lua'))()
+  assert(loadfile(vim.fn.stdpath('config') .. '/tests/terminal_titles.lua'))()
   assert(loadfile(vim.fn.stdpath('config') .. '/tests/terminal_resize.lua'))()
   assert(loadfile(vim.fn.stdpath('config') .. '/tests/explorer.lua'))()
+  assert(loadfile(vim.fn.stdpath('config') .. '/tests/snippets.lua'))()
   print('PASS: interactive startup, terminal layout/focus, reload, Telescope, zoom')
 end
 -- Leave VimEnter so explorer window/buffer events can run normally.

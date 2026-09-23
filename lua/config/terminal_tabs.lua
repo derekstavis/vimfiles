@@ -9,6 +9,12 @@ local function nonempty(value)
 end
 
 function M.label(buf, term)
+  local label = nonempty(vim.b[buf].neordr_label)
+  if label then return label end
+  -- Shells and applications report their current title via OSC 0/2. The cwd
+  -- and launch command persist while other programs run, so use them as fallbacks.
+  local title = nonempty(vim.b[buf].term_title)
+  if title then return title end
   local cwd = nonempty(vim.b[buf].osc7_dir)
   if cwd then return nonempty(vim.fs.basename(cwd:gsub('/+$', ''))) or '/' end
 
@@ -19,7 +25,7 @@ function M.label(buf, term)
   if type(program) == 'table' then program = program[1]
   elseif nonempty(program) then program = require('tiny-term').parse(program)[1] end
   if nonempty(program) then return vim.fs.basename(program) end
-  return nonempty(vim.b[buf].term_title) or 'shell'
+  return 'shell'
 end
 
 local function display_label(buf, term)

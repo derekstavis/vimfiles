@@ -80,11 +80,13 @@ check_bar(win)
 vim.fn.delete(edit_dir, 'rf')
 local labels = require('config.terminal_tabs')
 local fixture = vim.api.nvim_create_buf(false, true)
-vim.b[fixture].osc7_dir, vim.b[fixture].term_title = '/work/project', 'Fallback title'
-assert(labels.label(fixture, { cmd = { '/usr/bin/python', '-i' } }) == 'project', 'Reported cwd must take priority over program and title')
+vim.b[fixture].osc7_dir, vim.b[fixture].term_title = '/work/project', 'Live title'
+assert(labels.label(fixture, { cmd = { '/usr/bin/python', '-i' } }) == 'Live title', 'Live title must take priority over cwd and program')
+vim.b[fixture].term_title = nil
+assert(labels.label(fixture, { cmd = { '/usr/bin/python', '-i' } }) == 'project', 'Reported cwd must take priority over the fallback program')
 vim.b[fixture].osc7_dir = nil
-assert(labels.label(fixture, { cmd = { '/usr/bin/python', '-i' } }) == 'python', 'Program name must take priority over title')
-assert(labels.label(fixture) == 'Fallback title', 'Terminal title must be used when cwd and program are absent')
+assert(labels.label(fixture, { cmd = { '/usr/bin/python', '-i' } }) == 'python', 'Program name must be used when title and cwd are absent')
+assert(labels.label(fixture) == 'shell', 'Missing terminal metadata must fall back to shell')
 vim.api.nvim_buf_delete(fixture, { force = true })
 local directory = vim.fn.tempname() .. '/shell% tabs'
 vim.fn.mkdir(directory, 'p')
@@ -92,7 +94,9 @@ local editor_cwd = vim.fn.getcwd()
 if vim.fn.executable('fish') == 1 then
   vim.api.nvim_chan_send(second.job_id, 'cd ' .. vim.fn.shellescape(directory) .. '\r')
   assert(vim.wait(3000, function() return vim.b[second.buf].osc7_dir == directory end), 'Shell cd must update the reported directory')
-  assert(check_bar(win):find('shell% tabs', 1, true), 'Directory labels must display literal percent signs safely')
+  assert(vim.wait(3000, function() return (vim.b[second.buf].term_title or ''):find('shell%% tabs') end), 'Shell cd must update the live title')
+  local displayed_title = vim.fn.strcharpart(vim.b[second.buf].term_title, 0, 24)
+  assert(check_bar(win):find(displayed_title, 1, true), 'The tab must display the updated shell title')
   assert(vim.fn.getcwd() == editor_cwd, 'Shell directory changes must not change the editor cwd')
 end
 assert(vim.fn.maparg('[t', 'n') == '' and vim.fn.maparg(']t', 'n') == '', 'Old terminal cycling shortcuts must be removed')

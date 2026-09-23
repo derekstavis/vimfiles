@@ -4,6 +4,15 @@ local function autocmd(events, opts)
   vim.api.nvim_create_autocmd(events, opts)
 end
 autocmd('TextYankPost', { callback = function() vim.hl.on_yank({ timeout = 200 }) end })
+autocmd('ModeChanged', {
+  pattern = '*:n',
+  desc = 'Finish snippet editing when returning to Normal mode',
+  callback = function()
+    -- The default only stops at $0, leaving argument decorations after Escape.
+    -- End suspended outer snippets too when a completion was nested.
+    while MiniSnippets.session.get() do MiniSnippets.session.stop() end
+  end,
+})
 autocmd({ 'BufEnter', 'FocusGained', 'InsertLeave', 'WinEnter' }, {
   callback = function()
     if vim.wo.number and vim.bo.buftype == '' and vim.fn.mode() ~= 'i' then

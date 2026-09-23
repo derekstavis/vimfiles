@@ -16,18 +16,34 @@ local function panel(position, anchor)
   return panels[key]
 end
 
-local function prepare_side(state)
-  if state.position ~= 'right' then return end
-  if not state.win or not vim.api.nvim_win_is_valid(state.win) then
-    local anchor = state.anchor
-    if not anchor or not vim.api.nvim_win_is_valid(anchor) then anchor = vim.api.nvim_get_current_win() end
-    -- tiny-term normally uses botright. Supply a local split for it to stack in.
-    vim.api.nvim_win_call(anchor, function()
-      vim.cmd('rightbelow vsplit')
-      state.win = vim.api.nvim_get_current_win()
-    end)
+-- Recover panel windows when reloading this module with jobs already running.
+for _, term in ipairs(tiny.list()) do
+  if term.config_panel and term.win and vim.api.nvim_win_is_valid(term.win) then
+    term.config_panel.win = term.win
   end
-  windows.register_split('right', state.win)
+end
+
+local function prepare_side(state)
+  if not state.win or not vim.api.nvim_win_is_valid(state.win) then
+    if state.position == 'right' or state.direction then
+      local anchor = state.anchor
+      if not anchor or not vim.api.nvim_win_is_valid(anchor) then anchor = vim.api.nvim_get_current_win() end
+      vim.api.nvim_win_call(anchor, function()
+        local right = (state.direction or state.position) == 'right'
+        local size = right and vim.api.nvim_win_get_width(anchor) or vim.api.nvim_win_get_height(anchor)
+        vim.cmd(right and 'rightbelow vsplit' or 'rightbelow split')
+        state.win = vim.api.nvim_get_current_win()
+        if state.direction then
+          local desired = math.max(1, math.floor(size * (1 - (state.ratio or 0.5))))
+          if right then vim.api.nvim_win_set_width(state.win, desired)
+          else vim.api.nvim_win_set_height(state.win, desired) end
+        end
+      end)
+    else
+      state.win = windows.create_split({win={position=state.position,split_size=state.height or 14}})
+    end
+  end
+  windows.register_split(state.position, state.win)
 end
 
 local function current()
@@ -88,7 +104,7 @@ local function restore(state)
   local active = terminals.get(state.active)
   if win and active and not active.exited then windows.switch_to_terminal(win, active.id) end
   state.ids, state.active = nil, nil
-  if win then tidy(win, state.position, previous, state.height) end
+  if win then tidy(win, state.direction and "adjacent" or state.position, previous, state.height) end
 end
 
 local function adapt(term)
@@ -114,23 +130,39 @@ local function adapt(term)
   term.handle_exit = function(self) vim.schedule(function() self:close() end) end
 end
 
-function M.new(position, focus)
+function M.new(position, focus, opts)
+  opts = opts or {}
   position = position or 'bottom'
   local editor = vim.api.nvim_get_current_win()
   local focused = current()
-  local state = position == 'right' and focused and focused.opts.win.position == 'right' and focused.config_panel
-    or panel(position, position == 'right' and editor or nil)
+  local state
+  if opts.split then
+    assert(opts.split.direction == 'right' or opts.split.direction == 'down')
+    assert(vim.api.nvim_win_is_valid(opts.split.target_win))
+    state = {position=position, anchor=opts.split.target_win, direction=opts.split.direction, ratio=opts.split.ratio}
+  else
+    state = position == 'right' and focused and focused.opts.win.position == 'right' and focused.config_panel
+      or panel(position, position == 'right' and editor or nil)
+  end
   restore(state)
   local previous = capture_layout(position)
   prepare_side(state)
-  local term = tiny.open(nil, {
+  local term = terminals.create_new(nil, {
+    cwd = opts.cwd, env = opts.env,
     start_insert = false, auto_insert = false,
     win = { position = position, split_size = position == 'bottom' and (state.height or 14) or 60, stack = true,
       keys = { { 'q', function() M.toggle() end, desc = 'Hide terminal panel' } } },
   })
   term.config_panel = state
+  local start = term.start_process
+  term.start_process = function(self)
+    local neordr = package.loaded['neordr']
+    if neordr and neordr.session then self.env = neordr.prepare(self.buf, self.env) end
+    return start(self)
+  end
+  term:show()
   adapt(term)
-  tidy(term.win, position, previous, state.height)
+  tidy(term.win, state.direction and "adjacent" or position, previous, state.height)
   if focus == false then
     vim.cmd.stopinsert()
     vim.api.nvim_set_current_win(editor)
@@ -139,6 +171,21 @@ function M.new(position, focus)
     vim.cmd.startinsert()
   end
   return term
+end
+
+function M.focus_buffer(buf)
+  for _, term in ipairs(tiny.list()) do
+    if term.buf == buf and not term.exited then
+      local state = term.config_panel
+      if state then restore(state); prepare_side(state) end
+      term:show()
+      windows.switch_to_terminal(term.win, term.id)
+      vim.api.nvim_set_current_win(term.win)
+      vim.cmd.startinsert()
+      return true
+    end
+  end
+  return false
 end
 
 function M.toggle()

@@ -117,7 +117,9 @@ or triggers completion after text; Shift-Tab selects the previous item. Enter
 accepts a selected item, and Ctrl-Space triggers completion explicitly.
 
 Type a snippet prefix, then press Ctrl-J to expand it. Ctrl-L and Ctrl-H move
-between snippet fields. Custom snippets live in [snippets/](snippets/), including
+between snippet fields, including function arguments inserted by completion.
+Escape ends snippet editing and clears its field markers; Ctrl-C ends the
+snippet session while staying in Insert mode. Custom snippets live in [snippets/](snippets/), including
 `log` for Java/JavaScript and `setTimeout` for JavaScript.
 
 | Shortcut | Action |
@@ -163,9 +165,11 @@ a numeric prefix changes the amount.
 
 Tiny-term groups shells into tabs along the bottom of each terminal panel,
 using the same Gruvbox colors and separators as the editor statusline. Labels
-show a shell icon and the reported directory name, falling back to the known
-program name, then the terminal title. Fish reports directory changes
-automatically; other shells can report them with OSC 7. Click a tab to select
+show a shell icon and the live title reported by the shell or application.
+Explicit Neordr labels take priority; when no title is available, labels fall
+back to the reported directory and then the program name. Fish reports titles
+and directory changes automatically; other shells can report them with OSC 0/2
+and OSC 7 respectively. Click a tab to select
 it or its **×** to close that shell. Press Escape twice to enter Normal mode,
 then use Ctrl-] / Ctrl-[ to switch terminals or `q` to hide the panel. Hiding keeps
 shells running; `,3` restores them. `,sh` adds a new terminal tab to the panel.
