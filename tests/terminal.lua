@@ -64,6 +64,12 @@ end), 'nvr must open the commit message in the calling terminal split: ' .. vim.
 }))
 local commit_buf = vim.api.nvim_win_get_buf(win)
 assert(vim.bo[commit_buf].filetype == 'gitcommit', 'Expected a Git editor buffer')
+-- nvr opens the buffer and registers its deletion listener in separate RPCs.
+-- Wait for that registration before a fast test can delete the buffer.
+assert(wait_for_remote(function()
+  local clients = vim.b[commit_buf].nvr
+  return type(clients) == 'table' and #clients > 0
+end), 'nvr must register its buffer-deletion listener')
 assert(vim.fn.filereadable(resumed) == 0, 'nvr must wait until its buffer is deleted')
 require('lualine').refresh({ scope = 'all', force = true })
 vim.api.nvim_buf_set_lines(commit_buf, 0, -1, false, { 'Test terminal editor round trip' })

@@ -98,20 +98,21 @@ function M.setup()
     if vim.bo.buftype == 'terminal' then return statusline end
     return original_statusline(...)
   end
-  -- The plugin recreates its top winbar when opening or selecting a terminal.
-  -- Replace it immediately, retaining its tab registry and click handlers.
-  windows.config_tabline_originals = windows.config_tabline_originals or {
-    stack_in_split = windows.stack_in_split, switch_to_terminal = windows.switch_to_terminal,
-  }
-  local originals = windows.config_tabline_originals
-  windows.stack_in_split = function(...)
-    local win = originals.stack_in_split(...)
+  -- tiny-term calls this global helper when opening, switching, or closing tabs.
+  -- Install the bottom bar directly: adding then clearing its top winbar can
+  -- disturb an incremental TUI's cursor even though the final size is unchanged.
+  _G.configure_terminal_window = function(win, opts)
+    if not opts.term or not vim.api.nvim_win_is_valid(win) then return end
+    vim.w[win].tiny_term_id = opts.term.id
+    windows.register_terminal_in_split(win, opts.term.id)
+    vim.w[win]._tiny_term_tab_ids = windows.get_split_terminals(win)
     M.apply(win)
-    return win
   end
-  windows.switch_to_terminal = function(win, id)
-    originals.switch_to_terminal(win, id)
-    M.apply(win)
+  -- Unwrap existing functions when reloading into a running editor.
+  if windows.config_tabline_originals then
+    windows.stack_in_split = windows.config_tabline_originals.stack_in_split
+    windows.switch_to_terminal = windows.config_tabline_originals.switch_to_terminal
+    windows.config_tabline_originals = nil
   end
 
   local group = vim.api.nvim_create_augroup('ConfigTerminalTabs', { clear = true })
