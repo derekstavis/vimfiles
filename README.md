@@ -52,6 +52,9 @@ for Normal mode unless a section specifies otherwise.
 ### File tree and previews
 
 The tree is docked on the left and spans the editing area's full height.
+An open sidebar follows you between Neovim tabs. Its root follows the active
+tab's working directory: use `:tcd /path/to/project` to change it. Switching tabs
+restores that tab's root; window-local `:lcd` directories do not affect it.
 Opening a file keeps the tree visible. Previews appear only for files and follow the selection in a
 borderless window beside it, with a filename header and a lighter Gruvbox
 background. The preview fills the top row of adjacent editor splits, combining
@@ -82,6 +85,12 @@ These shortcuts apply **inside the tree**:
 
 Native LSP provides diagnostics, navigation, rename, code actions, inlay hints,
 and code lenses when supported by the language server.
+
+External edits are checked when you return to the editor, switch buffers, leave
+Insert or Terminal mode, or pause in Normal mode. Unmodified loaded files,
+including hidden dependencies, reload and synchronize with their language servers.
+Unsaved edits are preserved; conflicting disk changes use Neovim's normal warning.
+Use `:checktime` to check the current file immediately.
 
 | Shortcut | Action |
 | --- | --- |
@@ -239,5 +248,6 @@ Git-editor test.
 ```sh
 nvim --headless --cmd 'let g:loaded_wakatime = 1' -c 'luafile tests/smoke.lua'
 nvim --headless --cmd 'let g:loaded_wakatime = 1' -c 'luafile tests/languages.lua'
+nvim --headless --cmd 'let g:loaded_wakatime = 1' -c 'luafile tests/external_changes.lua'
 nvim --cmd 'let g:loaded_wakatime = 1' -c 'autocmd VimEnter * ++once luafile tests/ui.lua'
 ```

@@ -22,6 +22,7 @@ local function run()
   assert(loadfile(vim.fn.stdpath('config') .. '/tests/terminal_titles.lua'))()
   assert(loadfile(vim.fn.stdpath('config') .. '/tests/terminal_resize.lua'))()
   assert(loadfile(vim.fn.stdpath('config') .. '/tests/explorer.lua'))()
+  assert(loadfile(vim.fn.stdpath('config') .. '/tests/explorer_cwd.lua'))()
   assert(loadfile(vim.fn.stdpath('config') .. '/tests/snippets.lua'))()
   print('PASS: interactive startup, terminal layout/focus, reload, Telescope, zoom')
 end

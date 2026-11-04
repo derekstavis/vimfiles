@@ -61,11 +61,16 @@ function Preview:calculate_win_size()
 end
 
 require('nvim-tree').setup({
+  -- The shared tree follows the active tab; directory changes are one-way.
+  tab = { sync = { open = true, close = false } },
   view = { side = 'left', width = 32, float = { enable = false } },
   renderer = { group_empty = false, indent_markers = { enable = true } },
   filters = { dotfiles = false, git_ignored = false },
   update_focused_file = { enable = true, update_root = false },
-  actions = { open_file = { quit_on_open = false, window_picker = { enable = false } } },
+  actions = {
+    change_dir = { enable = false },
+    open_file = { quit_on_open = false, window_picker = { enable = false } },
+  },
   on_attach = function(buf)
     api.map.on_attach.default(buf)
     local function map(lhs, rhs, desc)
@@ -109,6 +114,45 @@ require('nvim-tree').setup({
 })
 
 local group = vim.api.nvim_create_augroup('ConfigExplorer', { clear = true })
+local function watch_preview()
+  if vim.bo.filetype == 'NvimTree' and vim.g.explorer_previews
+    and not preview.is_watching() and api.tree.get_node_under_cursor() then
+    preview.watch()
+  end
+end
+local syncing_cwd = false
+local function sync_tab_cwd()
+  if syncing_cwd then return end
+  local root = api.tree.get_nodes()
+  -- Ignore :lcd in individual splits; :tcd (or the inherited global cwd) owns
+  -- the tab's project. Do not create or open a tree just because cwd changed.
+  local cwd = vim.fn.getcwd(-1, 0)
+  local tab = vim.api.nvim_get_current_tabpage()
+  if not root or root.absolute_path == (vim.uv.fs_realpath(cwd) or cwd) then return end
+  -- Tree rebuilding may wait for Git and process another queued callback.
+  syncing_cwd = true
+  local ok, err = pcall(function()
+    preview.unwatch()
+    api.tree.change_root(cwd)
+    watch_preview()
+  end)
+  syncing_cwd = false
+  if not ok then error(err) end
+  -- A tab/cwd change may have arrived while rebuilding the previous root.
+  if vim.api.nvim_get_current_tabpage() ~= tab or vim.fn.getcwd(-1, 0) ~= cwd then
+    vim.schedule(sync_tab_cwd)
+  end
+end
+vim.api.nvim_create_autocmd({ 'TabEnter', 'DirChanged' }, {
+  group = group,
+  -- Run after tab/window switching and nvim-tree's own tab-open handler.
+  callback = vim.schedule_wrap(sync_tab_cwd),
+})
+vim.api.nvim_create_autocmd('BufWinEnter', {
+  group = group, pattern = 'NvimTree_*', callback = vim.schedule_wrap(sync_tab_cwd),
+})
+vim.api.nvim_create_autocmd('TabLeave', { group = group, callback = preview.unwatch })
+vim.schedule(sync_tab_cwd)
 vim.api.nvim_create_autocmd({ 'VimResized', 'WinResized' }, {
   group = group,
   callback = function()
@@ -122,11 +166,6 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'WinEnter' }, {
   group = group,
   callback = function()
     if vim.bo.filetype ~= 'NvimTree' then return end
-    vim.schedule(function()
-      if vim.bo.filetype == 'NvimTree' and vim.g.explorer_previews
-        and not preview.is_watching() and api.tree.get_node_under_cursor() then
-        preview.watch()
-      end
-    end)
+    vim.schedule(watch_preview)
   end,
 })

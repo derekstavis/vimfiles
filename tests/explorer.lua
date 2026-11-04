@@ -2,6 +2,7 @@
 local api = require('nvim-tree.api')
 local preview = require('nvim-tree-preview')
 local temp = vim.fn.tempname()
+local previous_cwd = vim.fn.getcwd(-1, 0)
 vim.fn.mkdir(temp .. '/folder', 'p')
 vim.fn.writefile({ 'first preview' }, temp .. '/one.txt')
 vim.fn.writefile({ 'second preview' }, temp .. '/two.txt')
@@ -62,6 +63,7 @@ for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
   end
 end
 assert(editor, 'Expected an editor beside the terminal')
+vim.cmd.tcd(vim.fn.fnameescape(temp))
 api.tree.open({ path = temp })
 check_docked()
 select('one.txt')
@@ -204,5 +206,6 @@ vim.wait(100)
 assert(not preview.is_open() and api.tree.is_visible(), 'Escape must dismiss the preview without closing the sidebar or reopening the preview')
 api.tree.close()
 vim.g.explorer_previews = true
+vim.cmd.tcd(vim.fn.fnameescape(previous_cwd))
 vim.fn.delete(temp, 'rf')
 print('PASS: full-height tree, preview following/toggle/focus, in-place expansion, persistent sidebar')

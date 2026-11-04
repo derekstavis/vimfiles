@@ -3,6 +3,34 @@ local function autocmd(events, opts)
   opts.group = group
   vim.api.nvim_create_autocmd(events, opts)
 end
+local check_pending = false
+autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'InsertLeave', 'TermLeave', 'TermClose' }, {
+  desc = 'Reload externally changed files and synchronize attached language servers',
+  callback = function()
+    if check_pending then return end
+    check_pending = true
+    vim.schedule(function()
+      -- Avoid reloads or conflict prompts while typing or using a command window.
+      if vim.api.nvim_get_mode().mode ~= 'n' or vim.fn.getcmdwintype() ~= '' then
+        check_pending = false
+        return
+      end
+      -- Check every loaded file, including hidden dependencies. 'autoread'
+      -- preserves unsaved edits; the native LSP client handles buffer reloads.
+      -- A bare :checktime can skip hidden buffers on this Neovim version.
+      local ok, err = pcall(function()
+        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+          if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buftype == ''
+            and vim.api.nvim_buf_get_name(buf) ~= '' then
+            vim.cmd.checktime(tostring(buf))
+          end
+        end
+      end)
+      check_pending = false
+      if not ok then error(err) end
+    end)
+  end,
+})
 autocmd('TextYankPost', { callback = function() vim.hl.on_yank({ timeout = 200 }) end })
 autocmd('ModeChanged', {
   pattern = '*:n',
