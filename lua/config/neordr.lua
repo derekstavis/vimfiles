@@ -5,6 +5,7 @@ if vim.fn.isdirectory(root .. '/lua/neordr') == 0 or vim.fn.executable(bin) == 0
 vim.opt.runtimepath:prepend(root)
 require('neordr').setup({
   bin = bin,
+  tab_label_mode = 'cwd',
   split_terminal = function(opts)
     opts.split = {target_win=opts.target_win, direction=opts.direction, ratio=opts.ratio}
     return require('config.terminal').new(opts.direction == 'right' and 'right' or 'bottom', true, opts).buf
